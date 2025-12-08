@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { laptopRoutes } from "./modules/laptops/routes";
-import { laptopsData } from "./laptops";
+import { dataLaptops } from "./data";
 import { commonRoute } from "./modules/common/route";
 
 const app = new Hono();
@@ -10,13 +10,6 @@ app.use(logger());
 
 app.route("/", commonRoute);
 app.route("/laptops", laptopRoutes);
-
-app.get("/laptops/:slug", (c) => {
-  const slug = c.req.param("slug");
-  const foundLaptop = laptopsData.find((laptop) => laptop.slug === slug);
-
-  return c.json(foundLaptop);
-});
 
 app.post("/laptops", (c) => {
   return c.json({
@@ -28,13 +21,13 @@ app.post("/laptops", (c) => {
 
 app.delete("/laptops/:id", (c) => {
   const laptopId = c.req.param("id");
-  const updateData = laptopsData.filter((laptop) => laptop.id !== laptopId);
+  const updateData = dataLaptops.filter((laptop) => laptop.id !== laptopId);
 
   return c.json(updateData);
 });
 
 app.delete("/laptops", (c) => {
-  let data = laptopsData;
+  let data = dataLaptops;
   const updateData = (data = []);
   return c.json(updateData);
 });
@@ -42,7 +35,7 @@ app.delete("/laptops", (c) => {
 app.put("/laptops/:slug", (c) => {
   const laptopSlug = c.req.param("slug");
 
-  const updateData = laptopsData.map((laptop) => {
+  const updateData = dataLaptops.map((laptop) => {
     if (laptop.slug === laptopSlug) {
       const updateLaptop = {
         ...laptop,

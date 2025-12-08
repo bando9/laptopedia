@@ -1,4 +1,6 @@
-export let laptopsData = [
+import { Laptops } from "./types/laptops";
+
+export let dataLaptops: Laptops = [
   {
     id: "lap_001",
     brand: "Asus",
