@@ -7,6 +7,7 @@ export const laptopsData = [
     id: "lap_001",
     brand: "Asus",
     model: "ROG Zephyrus G14",
+    slug: "asus-rog-zephyrus-g14",
     cpu: "AMD Ryzen 7 7840HS",
     gpu: "NVIDIA GeForce RTX 4060",
     ram: "16GB DDR5",
@@ -21,6 +22,7 @@ export const laptopsData = [
     id: "lap_002",
     brand: "Apple",
     model: 'MacBook Air M2 13"',
+    slug: "apple-macbook-air-m2-13",
     cpu: "Apple M2",
     gpu: "Apple M2 GPU (10-core)",
     ram: "8GB Unified Memory",
@@ -35,6 +37,7 @@ export const laptopsData = [
     id: "lap_003",
     brand: "Lenovo",
     model: "Legion 5 Pro",
+    slug: "lenovo-legion-5-pro",
     cpu: "AMD Ryzen 7 6800H",
     gpu: "NVIDIA GeForce RTX 3070 Ti",
     ram: "16GB DDR5",
@@ -49,6 +52,7 @@ export const laptopsData = [
     id: "lap_004",
     brand: "Acer",
     model: "Swift X 14",
+    slug: "acer-swift-x-14",
     cpu: "Intel Core i7-13700H",
     gpu: "NVIDIA GeForce RTX 4050",
     ram: "16GB LPDDR5",
@@ -63,6 +67,7 @@ export const laptopsData = [
     id: "lap_005",
     brand: "HP",
     model: "Victus 15",
+    slug: "hp-victus-15",
     cpu: "Intel Core i5-12500H",
     gpu: "NVIDIA GeForce GTX 1650",
     ram: "8GB DDR4",
@@ -84,6 +89,14 @@ app.get("/", (c) => {
 
 app.get("/laptops", (c) => {
   return c.json(laptopsData);
+});
+
+app.get("/laptops/:slug", (c) => {
+  const slug = c.req.param("slug");
+  const foundLaptop = laptopsData.find((laptop) => laptop.slug === slug);
+  console.log(foundLaptop);
+
+  return c.json(foundLaptop);
 });
 
 export default app;
