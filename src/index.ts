@@ -121,4 +121,24 @@ app.delete("/laptops", (c) => {
   return c.json(updateData);
 });
 
+app.put("/laptops/:slug", (c) => {
+  const laptopSlug = c.req.param("slug");
+
+  const updateData = laptopsData.map((laptop) => {
+    if (laptop.slug === laptopSlug) {
+      const updateLaptop = {
+        ...laptop,
+        cpu: "AMD Ryzen 7 7840HS",
+        gpu: "NVIDIA GeForce RTX 4060",
+        ram: "16GB DDR5",
+        storage: "512GB SSD",
+      };
+      return updateLaptop;
+    }
+    return laptop;
+  });
+
+  return c.json(updateData);
+});
+
 export default app;
