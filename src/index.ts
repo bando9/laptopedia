@@ -1,8 +1,9 @@
 import { Hono } from "hono";
+import { logger } from "hono/logger";
 
 const app = new Hono();
 
-export const laptopsData = [
+export let laptopsData = [
   {
     id: "lap_001",
     brand: "Asus",
@@ -80,6 +81,8 @@ export const laptopsData = [
   },
 ];
 
+app.use(logger());
+
 app.get("/", (c) => {
   return c.json({
     title: "Laptop API",
@@ -94,9 +97,28 @@ app.get("/laptops", (c) => {
 app.get("/laptops/:slug", (c) => {
   const slug = c.req.param("slug");
   const foundLaptop = laptopsData.find((laptop) => laptop.slug === slug);
-  console.log(foundLaptop);
 
   return c.json(foundLaptop);
+});
+
+app.post("/laptops", (c) => {
+  return c.json({
+    id: "lap_006",
+    brand: "Asus",
+    model: "Asus Vivobook 14",
+  });
+});
+
+app.delete("/laptops/:id", (c) => {
+  const laptopId = c.req.param("id");
+  const updateData = laptopsData.filter((laptop) => laptop.id !== laptopId);
+
+  return c.json(updateData);
+});
+
+app.delete("/laptops", (c) => {
+  const updateData = (laptopsData = []);
+  return c.json(updateData);
 });
 
 export default app;
