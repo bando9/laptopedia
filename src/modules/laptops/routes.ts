@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { dataLaptops, dataLaptops as initialData } from "./data";
 import { CreateLaptopSchema, Laptop } from "./schema";
 import { zValidator } from "@hono/zod-validator";
+import { issue } from "zod/v4/core/util.cjs";
 
 export const laptopRoutes = new Hono();
 
@@ -18,8 +19,20 @@ laptopRoutes.get("/:slug", (c) => {
   return c.json(foundLaptop);
 });
 
-laptopRoutes.post("/", zValidator("json", CreateLaptopSchema), (c) => {
-  try {
+laptopRoutes.post(
+  "/",
+  zValidator("json", CreateLaptopSchema, (result, c) => {
+    if (!result.success) {
+      return c.json(
+        {
+          error: "Validation error",
+          issue: result.error.issues,
+        },
+        400
+      );
+    }
+  }),
+  (c) => {
     const data = c.req.valid("json");
 
     const newId =
@@ -35,10 +48,8 @@ laptopRoutes.post("/", zValidator("json", CreateLaptopSchema), (c) => {
     const updatedData = [...dataLaptops, newDataLaptop];
 
     return c.json(updatedData);
-  } catch (error) {
-    return c.json({ error: "Invalid JSON body" }, 400);
   }
-});
+);
 
 laptopRoutes.delete("/:id", (c) => {
   const laptopId = c.req.param("id");
