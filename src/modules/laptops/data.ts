@@ -1,4 +1,4 @@
-import { Laptops } from "./types/laptops";
+import { Laptops } from "./schema";
 
 export let dataLaptops: Laptops = [
   {
@@ -15,6 +15,7 @@ export let dataLaptops: Laptops = [
     weight: "1.65kg",
     release_year: 2023,
     price: 18990000,
+    createdAt: new Date(),
   },
   {
     id: "lap_002",
@@ -30,6 +31,7 @@ export let dataLaptops: Laptops = [
     weight: "1.24kg",
     release_year: 2022,
     price: 15999000,
+    createdAt: new Date(),
   },
   {
     id: "lap_003",
@@ -45,6 +47,7 @@ export let dataLaptops: Laptops = [
     weight: "2.49kg",
     release_year: 2022,
     price: 24999000,
+    createdAt: new Date(),
   },
   {
     id: "lap_004",
@@ -60,6 +63,7 @@ export let dataLaptops: Laptops = [
     weight: "1.4kg",
     release_year: 2023,
     price: 17499000,
+    createdAt: new Date(),
   },
   {
     id: "lap_005",
@@ -75,5 +79,6 @@ export let dataLaptops: Laptops = [
     weight: "2.29kg",
     release_year: 2023,
     price: 10999000,
+    createdAt: new Date(),
   },
 ];

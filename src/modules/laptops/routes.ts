@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { dataLaptops, dataLaptops as initialData } from "../../data";
-import { Laptop } from "../../types/laptops";
+import { dataLaptops, dataLaptops as initialData } from "./data";
+import { Laptop } from "./schema";
 
 export const laptopRoutes = new Hono();
 
@@ -35,6 +35,7 @@ laptopRoutes.post("/", (c) => {
     weight: "",
     release_year: 2022,
     price: 8500000,
+    createdAt: new Date(),
   };
 
   const updatedData = [...dataLaptops, newDataLaptop];
