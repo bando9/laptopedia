@@ -18,5 +18,19 @@ export const LaptopSchema = z.object({
 });
 export const LaptopsSchema = LaptopSchema.array();
 
+export const CreateLaptopSchema = z.object({
+  brand: z.string(),
+  model: z.string(),
+  cpu: z.string(),
+  gpu: z.string(),
+  ram: z.string(),
+  storage: z.string(),
+  display: z.string(),
+  battery: z.string(),
+  weight: z.string(),
+  release_year: z.number(),
+  price: z.number(),
+});
+
 export type Laptop = z.infer<typeof LaptopSchema>;
 export type Laptops = z.infer<typeof LaptopsSchema>;

@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { dataLaptops, dataLaptops as initialData } from "./data";
-import { Laptop } from "./schema";
+import { CreateLaptopSchema, Laptop } from "./schema";
+import { zValidator } from "@hono/zod-validator";
 
 export const laptopRoutes = new Hono();
 
@@ -10,37 +11,33 @@ laptopRoutes.get("/", (c) => {
 
 laptopRoutes.get("/:slug", (c) => {
   const slug = c.req.param("slug");
-
   const foundLaptop = dataLaptops.find((laptop) => laptop.slug === slug);
-
   if (!foundLaptop) {
     return c.notFound();
   }
-
   return c.json(foundLaptop);
 });
 
-laptopRoutes.post("/", (c) => {
-  const newDataLaptop: Laptop = {
-    id: "lap_006",
-    brand: "Asus",
-    model: "Asus Vivobook 14",
-    slug: "asus-vivobook-14",
-    cpu: "",
-    gpu: "",
-    ram: "8GB DDR4",
-    storage: "512GB SSD",
-    display: "",
-    battery: "",
-    weight: "",
-    release_year: 2022,
-    price: 8500000,
-    createdAt: new Date(),
-  };
+laptopRoutes.post("/", zValidator("json", CreateLaptopSchema), (c) => {
+  try {
+    const data = c.req.valid("json");
 
-  const updatedData = [...dataLaptops, newDataLaptop];
+    const newId =
+      dataLaptops.length > 0 ? dataLaptops[dataLaptops.length - 1].id + 1 : 1;
 
-  return c.json(updatedData);
+    const newDataLaptop: Laptop = {
+      id: String(newId),
+      ...data,
+      slug: "",
+      createdAt: new Date(),
+    };
+
+    const updatedData = [...dataLaptops, newDataLaptop];
+
+    return c.json(updatedData);
+  } catch (error) {
+    return c.json({ error: "Invalid JSON body" }, 400);
+  }
 });
 
 laptopRoutes.delete("/:id", (c) => {
@@ -55,17 +52,16 @@ laptopRoutes.delete("/", (c) => {
   return c.json(laptops);
 });
 
-laptopRoutes.patch("/:slug", (c) => {
+laptopRoutes.patch("/:slug", async (c) => {
   const laptopSlug = c.req.param("slug");
+
+  const data = await c.req.json();
 
   const updatedData = dataLaptops.map((laptop) => {
     if (laptop.slug === laptopSlug) {
       const updatedLaptop = {
         ...laptop,
-        cpu: "AMD Ryzen 7 7840HS",
-        gpu: "NVIDIA GeForce RTX 4060",
-        ram: "16GB DDR5",
-        storage: "512GB SSD",
+        ...data,
       };
       return updatedLaptop;
     }
