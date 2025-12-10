@@ -1,9 +1,12 @@
 import { Hono } from "hono";
-import { dataLaptops, dataLaptops as initialData } from "./data";
+import { initialData } from "./data";
 import { CreateLaptopSchema, Laptop } from "./schema";
 import { zValidator } from "@hono/zod-validator";
+import slugify from "slugify";
 
 export const laptopRoutes = new Hono();
+
+let dataLaptops = initialData;
 
 laptopRoutes.get("/", (c) => {
   return c.json(dataLaptops);
@@ -19,7 +22,7 @@ laptopRoutes.get("/:slug", (c) => {
 });
 
 laptopRoutes.post(
-  "/",
+  "/new",
   zValidator("json", CreateLaptopSchema, (result, c) => {
     if (!result.success) {
       return c.json(
@@ -37,16 +40,19 @@ laptopRoutes.post(
     const newId =
       dataLaptops.length > 0 ? dataLaptops[dataLaptops.length - 1].id + 1 : 1;
 
+    const newSlug = slugify(
+      `${data.brand.toLowerCase()} ${data.model.toLowerCase()}`
+    );
+
     const newDataLaptop: Laptop = {
       id: newId,
+      slug: newSlug,
       ...data,
-      slug: "",
       createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
-    const updatedData = [...dataLaptops, newDataLaptop];
-
-    return c.json(updatedData, 201);
+    return c.json(newDataLaptop, 201);
   }
 );
 
@@ -56,35 +62,54 @@ laptopRoutes.delete("/:id", (c) => {
     (laptop) => laptop.id === Number(laptopId)
   );
 
+  if (!foundLaptop) {
+    return c.notFound();
+  }
+
   const updatedData = dataLaptops.filter(
     (laptop) => laptop.id !== Number(laptopId)
   );
 
-  return c.json({
-    message: `${foundLaptop?.model} success deleted`,
-    data: updatedData,
-  });
+  return c.json({ updatedData });
 });
 
 laptopRoutes.delete("/", (c) => {
-  let laptops = [...initialData];
-  laptops = [];
-  return c.json({
-    message: "reset data success",
-    data: laptops,
-  });
+  dataLaptops = [];
+  return c.json({ dataLaptops });
 });
 
-laptopRoutes.patch("/:slug", async (c) => {
-  const laptopSlug = c.req.param("slug");
-
+laptopRoutes.patch("/:id", async (c) => {
+  const laptopId = c.req.param("id");
   const data = await c.req.json();
 
+  const foundLaptop = dataLaptops.find(
+    (laptop) => laptop.id === Number(laptopId)
+  );
+
+  if (!foundLaptop) {
+    return c.notFound();
+  }
+
   const updatedData = dataLaptops.map((laptop) => {
-    if (laptop.slug === laptopSlug) {
-      const updatedLaptop = {
+    if (laptop.id === Number(laptopId)) {
+      const updatedLaptop: Laptop = {
         ...laptop,
         ...data,
+        id: laptop.id,
+        brand: data.brand || laptop.brand,
+        model: data.model || laptop.model,
+        slug: data.slug || laptop.slug,
+        cpu: data.cpu || laptop.cpu,
+        gpu: data.gpu || laptop.gpu,
+        ram: data.ram || laptop.ram,
+        storage: data.storage || laptop.storage,
+        display: data.display || laptop.display,
+        battery: data.battery || laptop.battery,
+        weight: data.weight || laptop.weight,
+        release_year: data.release_year || laptop.release_year,
+        price: data.price || laptop.price,
+        createdAt: laptop.createdAt,
+        updatedAt: new Date(),
       };
       return updatedLaptop;
     }

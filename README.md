@@ -12,10 +12,10 @@ Production: [https://laptopedia.bandomega.com](https://laptopedia.bandomega.com)
 | ---------------- | ----------- | ------------------------------------------------- | --------- |
 | `/laptops`       | GET         | Get all laptops                                   | ✅        |
 | `/laptops/:slug` | GET         | Get one laptop by slug                            | ✅        |
-| `/laptops`       | POST        | Add new laptop                                    | ✅        |
+| `/laptops/new`   | POST        | Add new laptop                                    | ✅        |
 | `/laptops`       | DELETE      | Delete all laptops                                | ✅        |
-| `/laptops/:id`   | DELETE      | Delete laptop by id                               | ✅        |
-| `/laptops/:id`   | PATCH       | Update laptop by id                               | -         |
+| `/laptops/:id`   | DELETE      | Delete one laptop by id                           | ✅        |
+| `/laptops/:id`   | PATCH       | Update laptop by id                               | ✅        |
 | `/laptops/:id`   | PUT         | Update laptop by id. Create data if doesn't exist | -         |
 
 ## Get Started

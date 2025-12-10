@@ -15,6 +15,7 @@ export const LaptopSchema = z.object({
   release_year: z.number(),
   price: z.number(),
   createdAt: z.date(),
+  updatedAt: z.date(),
 });
 export const LaptopsSchema = LaptopSchema.array();
 

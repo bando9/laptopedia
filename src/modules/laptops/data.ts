@@ -1,6 +1,6 @@
 import { Laptops } from "./schema";
 
-export let dataLaptops: Laptops = [
+export let initialData: Laptops = [
   {
     id: 1,
     brand: "Asus",
@@ -16,11 +16,12 @@ export let dataLaptops: Laptops = [
     release_year: 2023,
     price: 18990000,
     createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: 2,
     brand: "Apple",
-    model: 'MacBook Air M2 13"',
+    model: "MacBook Air M2 13",
     slug: "apple-macbook-air-m2-13",
     cpu: "Apple M2",
     gpu: "Apple M2 GPU (10-core)",
@@ -32,6 +33,7 @@ export let dataLaptops: Laptops = [
     release_year: 2022,
     price: 15999000,
     createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: 3,
@@ -48,6 +50,7 @@ export let dataLaptops: Laptops = [
     release_year: 2022,
     price: 24999000,
     createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: 4,
@@ -64,6 +67,7 @@ export let dataLaptops: Laptops = [
     release_year: 2023,
     price: 17499000,
     createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: 5,
@@ -80,5 +84,6 @@ export let dataLaptops: Laptops = [
     release_year: 2023,
     price: 10999000,
     createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ];
