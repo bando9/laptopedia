@@ -2,7 +2,7 @@ import { Laptops } from "./schema";
 
 export let dataLaptops: Laptops = [
   {
-    id: "lap_001",
+    id: 1,
     brand: "Asus",
     model: "ROG Zephyrus G14",
     slug: "asus-rog-zephyrus-g14",
@@ -18,7 +18,7 @@ export let dataLaptops: Laptops = [
     createdAt: new Date(),
   },
   {
-    id: "lap_002",
+    id: 2,
     brand: "Apple",
     model: 'MacBook Air M2 13"',
     slug: "apple-macbook-air-m2-13",
@@ -34,7 +34,7 @@ export let dataLaptops: Laptops = [
     createdAt: new Date(),
   },
   {
-    id: "lap_003",
+    id: 3,
     brand: "Lenovo",
     model: "Legion 5 Pro",
     slug: "lenovo-legion-5-pro",
@@ -50,7 +50,7 @@ export let dataLaptops: Laptops = [
     createdAt: new Date(),
   },
   {
-    id: "lap_004",
+    id: 4,
     brand: "Acer",
     model: "Swift X 14",
     slug: "acer-swift-x-14",
@@ -66,7 +66,7 @@ export let dataLaptops: Laptops = [
     createdAt: new Date(),
   },
   {
-    id: "lap_005",
+    id: 5,
     brand: "HP",
     model: "Victus 15",
     slug: "hp-victus-15",

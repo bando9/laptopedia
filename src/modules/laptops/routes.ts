@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import { dataLaptops, dataLaptops as initialData } from "./data";
 import { CreateLaptopSchema, Laptop } from "./schema";
 import { zValidator } from "@hono/zod-validator";
-import { issue } from "zod/v4/core/util.cjs";
 
 export const laptopRoutes = new Hono();
 
@@ -39,7 +38,7 @@ laptopRoutes.post(
       dataLaptops.length > 0 ? dataLaptops[dataLaptops.length - 1].id + 1 : 1;
 
     const newDataLaptop: Laptop = {
-      id: String(newId),
+      id: newId,
       ...data,
       slug: "",
       createdAt: new Date(),
@@ -47,20 +46,33 @@ laptopRoutes.post(
 
     const updatedData = [...dataLaptops, newDataLaptop];
 
-    return c.json(updatedData);
+    return c.json(updatedData, 201);
   }
 );
 
 laptopRoutes.delete("/:id", (c) => {
   const laptopId = c.req.param("id");
-  const updatedData = dataLaptops.filter((laptop) => laptop.id !== laptopId);
-  return c.json(updatedData);
+  const foundLaptop = dataLaptops.find(
+    (laptop) => laptop.id === Number(laptopId)
+  );
+
+  const updatedData = dataLaptops.filter(
+    (laptop) => laptop.id !== Number(laptopId)
+  );
+
+  return c.json({
+    message: `${foundLaptop?.model} success deleted`,
+    data: updatedData,
+  });
 });
 
 laptopRoutes.delete("/", (c) => {
   let laptops = [...initialData];
   laptops = [];
-  return c.json(laptops);
+  return c.json({
+    message: "reset data success",
+    data: laptops,
+  });
 });
 
 laptopRoutes.patch("/:slug", async (c) => {
