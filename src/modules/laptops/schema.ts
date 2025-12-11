@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "@hono/zod-openapi";
 
 export const LaptopSchema = z.object({
   id: z.number(),
@@ -35,3 +35,14 @@ export const CreateLaptopSchema = z.object({
 
 export type Laptop = z.infer<typeof LaptopSchema>;
 export type Laptops = z.infer<typeof LaptopsSchema>;
+
+export const LaptopIdSchema = z.object({
+  id: z.coerce.number().min(1).openapi({ example: 2 }),
+});
+
+export const LaptopSchemaAPI = z.object({
+  id: z.string().openapi({ example: "1" }),
+  brand: z.string().openapi({ example: "Asus" }),
+  model: z.string().openapi({ example: "ROG Zephyrus G14" }),
+  cpu: z.string().openapi({ example: "AMD Ryzen 7 7840HS" }),
+});

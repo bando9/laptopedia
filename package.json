@@ -4,8 +4,10 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
+    "@hono/zod-openapi": "^1.1.5",
     "@hono/zod-validator": "^0.7.5",
-    "hono": "^4.10.7",
+    "@scalar/hono-api-reference": "^0.9.28",
+    "hono": "^4.10.8",
     "slugify": "^1.6.6",
     "zod": "^4.1.13"
   },

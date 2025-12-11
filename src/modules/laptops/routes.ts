@@ -118,3 +118,24 @@ laptopRoutes.patch("/:id", async (c) => {
 
   return c.json(updatedData);
 });
+
+import { OpenAPIHono } from "@hono/zod-openapi";
+
+export const laptopAPIRoutes = new OpenAPIHono();
+
+laptopAPIRoutes.openapi(
+  {
+    method: "get",
+    path: "/",
+    request: {
+      query: ParamSchemaAPI,
+    },
+    description: "Get all laptop",
+    responses: {
+      200: { description: "Successfully get all laptops" },
+    },
+  },
+  (c) => {
+    return c.json(dataLaptops, 200);
+  }
+);
