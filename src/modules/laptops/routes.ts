@@ -102,7 +102,7 @@ laptopRoutes.delete("/:id", (c) => {
     (laptop) => laptop.id !== Number(laptopId)
   );
 
-  return c.json({ updatedData });
+  return c.json(updatedData);
 });
 
 laptopRoutes.delete("/", (c) => {
