@@ -1,6 +1,9 @@
 import { initialDataLaptops } from "./data";
-import { CreateLaptopSchema, GetLaptopParamSchema } from "./schema";
-import { zValidator } from "@hono/zod-validator";
+import {
+  CreateLaptopSchema,
+  GetLaptopParamSchema,
+  LaptopSchema,
+} from "./schema";
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Laptop } from "./type";
@@ -56,26 +59,45 @@ laptopRoutes.openapi(
 
 // TODO: Use .openapi for everything else below
 
-laptopRoutes.post("/", zValidator("json", CreateLaptopSchema), (c) => {
-  const laptopBody = c.req.valid("json");
+laptopRoutes.openapi(
+  {
+    method: "post",
+    path: "/",
+    request: {
+      body: { content: { "application/json": { schema: CreateLaptopSchema } } },
+    },
+    description: "________",
+    responses: {
+      201: {
+        description: "Successfully________",
+        content: { "application/json": { schema: LaptopSchema } },
+      },
+      404: {
+        description: "Laptop not found",
+      },
+    },
+  },
+  (c) => {
+    const laptopBody = c.req.valid("json");
 
-  const newId =
-    dataLaptops.length > 0 ? dataLaptops[dataLaptops.length - 1].id + 1 : 1;
+    const newId =
+      dataLaptops.length > 0 ? dataLaptops[dataLaptops.length - 1].id + 1 : 1;
 
-  const newSlug = slugify(
-    `${laptopBody.brand.toLowerCase()} ${laptopBody.model.toLowerCase()}`
-  );
+    const newSlug = slugify(
+      `${laptopBody.brand.toLowerCase()} ${laptopBody.model.toLowerCase()}`
+    );
 
-  const newLaptop: Laptop = {
-    id: newId,
-    slug: newSlug,
-    ...laptopBody,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+    const newLaptop: Laptop = {
+      id: newId,
+      slug: newSlug,
+      ...laptopBody,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-  return c.json(newLaptop, 201);
-});
+    return c.json(newLaptop, 201);
+  }
+);
 
 laptopRoutes.delete("/", (c) => {
   dataLaptops = [];
