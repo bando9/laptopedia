@@ -1,16 +1,28 @@
-import { Hono } from "hono";
 import { initialData } from "./data";
 import { CreateLaptopSchema, Laptop } from "./schema";
 import { zValidator } from "@hono/zod-validator";
 import slugify from "slugify";
+import { OpenAPIHono } from "@hono/zod-openapi";
 
-export const laptopRoutes = new Hono();
+export const laptopRoutes = new OpenAPIHono();
 
 let dataLaptops = initialData;
 
-laptopRoutes.get("/", (c) => {
-  return c.json(dataLaptops);
-});
+laptopRoutes.openapi(
+  {
+    method: "get",
+    path: "/",
+    description: "Get all laptops",
+    responses: {
+      200: {
+        description: "Successfully get all laptops",
+      },
+    },
+  },
+  (c) => {
+    return c.json(dataLaptops);
+  }
+);
 
 laptopRoutes.get("/:slug", (c) => {
   const slug = c.req.param("slug");
