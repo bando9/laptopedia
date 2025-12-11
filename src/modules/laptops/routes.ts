@@ -138,7 +138,7 @@ laptopRoutes.patch("/:id", async (c) => {
         display: data.display || laptop.display,
         battery: data.battery || laptop.battery,
         weight: data.weight || laptop.weight,
-        release_year: data.release_year || laptop.release_year,
+        releaseYear: data.release_year || laptop.releaseYear,
         price: data.price || laptop.price,
         createdAt: laptop.createdAt,
         updatedAt: new Date(),

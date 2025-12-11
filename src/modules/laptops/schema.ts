@@ -16,7 +16,7 @@ export const LaptopSchema = z.object({
   display: z.string().optional(),
   battery: z.string().optional(),
   weight: z.string().optional(),
-  release_year: z.number(),
+  releaseYear: z.number(),
   price: z.number(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -33,7 +33,7 @@ export const CreateLaptopSchema = z.object({
   display: z.string().optional(),
   battery: z.string().optional(),
   weight: z.string().optional(),
-  release_year: z.number(),
+  releaseYear: z.number(),
   price: z.number(),
 });
 
