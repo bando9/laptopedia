@@ -1,5 +1,5 @@
 import { initialData } from "./data";
-import { CreateLaptopSchema, Laptop } from "./schema";
+import { CreateLaptopSchema, Laptop, LaptopSlugSchema } from "./schema";
 import { zValidator } from "@hono/zod-validator";
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
@@ -24,14 +24,34 @@ laptopRoutes.openapi(
   }
 );
 
-laptopRoutes.get("/:slug", (c) => {
-  const slug = c.req.param("slug");
-  const foundLaptop = dataLaptops.find((laptop) => laptop.slug === slug);
-  if (!foundLaptop) {
-    return c.notFound();
+laptopRoutes.openapi(
+  {
+    method: "get",
+    path: "/:slug",
+    request: {
+      params: LaptopSlugSchema,
+    },
+    description: "Get one laptop by slug",
+    responses: {
+      200: {
+        description: "Successfully get laptop detail",
+      },
+      404: {
+        description: "Laptop not found",
+      },
+    },
+  },
+  (c) => {
+    const slug = c.req.param("slug");
+    const foundLaptop = dataLaptops.find((laptop) => laptop.slug === slug);
+
+    if (!foundLaptop) {
+      return c.json("Laptop not found", 404);
+    }
+
+    return c.json(foundLaptop, 200);
   }
-  return c.json(foundLaptop);
-});
+);
 
 laptopRoutes.post(
   "/new",

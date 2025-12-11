@@ -1,5 +1,9 @@
 import { z } from "@hono/zod-openapi";
 
+export const LaptopSlugSchema = z.object({
+  slug: z.string().min(3),
+});
+
 export const LaptopSchema = z.object({
   id: z.number(),
   brand: z.string(),

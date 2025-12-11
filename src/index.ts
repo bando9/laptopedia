@@ -13,7 +13,7 @@ app.route("/laptops", laptopRoutes);
 
 // API Docs
 const description =
-  "Laptopedia is **informational REST API** providing structured and detailed information about laptops";
+  "A modern and lightweight **informational REST API** providing structured and detailed information about laptops, including specifications, brands, categories, hardware components, and pricing insights.";
 
 app.doc31("/docs", {
   openapi: "3.0.0",
