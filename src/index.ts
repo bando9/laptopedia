@@ -12,18 +12,16 @@ app.route("/", commonRoute);
 app.route("/laptops", laptopRoutes);
 
 // API Docs
-const description =
-  "A modern and lightweight **informational REST API** providing structured and detailed information about laptops, including specifications, brands, categories, hardware components, and pricing insights.";
-
-app.doc31("/docs", {
+app.doc("/openapi.json", {
   openapi: "3.0.0",
   info: {
     version: "1.0.0",
     title: "Laptops API",
-    description,
+    description:
+      "A modern and lightweight **informational REST API** providing structured and detailed information about laptops, including specifications, brands, categories, hardware components, and pricing insights.",
   },
 });
 
-app.get("/scalar", Scalar({ url: "/docs" }));
+app.get("/", Scalar({ url: "/openapi.json" }));
 
 export default app;

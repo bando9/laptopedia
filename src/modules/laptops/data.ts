@@ -1,6 +1,6 @@
-import { Laptops } from "./schema";
+import { Laptops } from "./type";
 
-export let initialData: Laptops = [
+export let initialDataLaptops: Laptops = [
   {
     id: 1,
     brand: "Asus",

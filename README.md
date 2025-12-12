@@ -2,11 +2,10 @@
 
 A modern and lightweight **informational REST API** providing structured and detailed information about laptops, including specifications, brands, categories, hardware components, and pricing insights.
 
-## Rest API Spesification
+## REST API Specification
 
-Local: http://localhost:3000
-
-Production: [https://laptopedia.bandomega.com](https://laptopedia.bandomega.com)
+- Local: <http://localhost:3000>
+- Production: <https://laptopedia.bandomega.com>
 
 | Endpoint Path    | HTTP Method | Description                                       | Available |
 | ---------------- | ----------- | ------------------------------------------------- | --------- |

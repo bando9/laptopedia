@@ -1,6 +1,9 @@
 import { z } from "@hono/zod-openapi";
 
-export const LaptopSlugSchema = z.object({
+export const SlugSchema = z.string().min(3);
+export const DateTimeSchema = z.date();
+
+export const GetLaptopParamSchema = z.object({
   slug: z.string().min(3),
 });
 
@@ -8,7 +11,7 @@ export const LaptopSchema = z.object({
   id: z.number(),
   brand: z.string(),
   model: z.string(),
-  slug: z.string(),
+  slug: SlugSchema,
   cpu: z.string(),
   gpu: z.string().optional(),
   ram: z.string().optional(),
@@ -18,24 +21,21 @@ export const LaptopSchema = z.object({
   weight: z.string().optional(),
   releaseYear: z.number(),
   price: z.number(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: DateTimeSchema,
+  updatedAt: DateTimeSchema,
 });
 export const LaptopsSchema = LaptopSchema.array();
 
-export const CreateLaptopSchema = z.object({
-  brand: z.string(),
-  model: z.string(),
-  cpu: z.string(),
-  gpu: z.string().optional(),
-  ram: z.string().optional(),
-  storage: z.string().optional(),
-  display: z.string().optional(),
-  battery: z.string().optional(),
-  weight: z.string().optional(),
-  releaseYear: z.number(),
-  price: z.number(),
+export const CreateLaptopSchema = LaptopSchema.pick({
+  brand: true,
+  model: true,
+  cpu: true,
+  gpu: true,
+  ram: true,
+  storage: true,
+  display: true,
+  battery: true,
+  weight: true,
+  releaseYear: true,
+  price: true,
 });
-
-export type Laptop = z.infer<typeof LaptopSchema>;
-export type Laptops = z.infer<typeof LaptopsSchema>;
