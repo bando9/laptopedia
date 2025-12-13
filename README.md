@@ -11,11 +11,11 @@ A modern and lightweight **informational REST API** providing structured and det
 | ---------------- | ----------- | ------------------------------------------------- | --------- |
 | `/laptops`       | GET         | Get all laptops                                   | ✅        |
 | `/laptops/:slug` | GET         | Get one laptop by slug                            | ✅        |
-| `/laptops/new`   | POST        | Add new laptop                                    | ✅        |
+| `/laptops`       | POST        | Add new laptop                                    | ✅        |
 | `/laptops`       | DELETE      | Delete all laptops                                | ✅        |
 | `/laptops/:id`   | DELETE      | Delete one laptop by id                           | ✅        |
 | `/laptops/:id`   | PATCH       | Update laptop by id                               | ✅        |
-| `/laptops/:id`   | PUT         | Update laptop by id. Create data if doesn't exist | -         |
+| `/laptops/:id`   | PUT         | Update laptop by id. Create data if doesn't exist | ✅        |
 
 ## Get Started
 
