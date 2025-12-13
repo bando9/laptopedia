@@ -1,6 +1,11 @@
 import { initialDataLaptops } from "./data";
-import { CreateLaptopSchema, GetLaptopParamSchema } from "./schema";
-import { zValidator } from "@hono/zod-validator";
+import {
+  CreateLaptopSchema,
+  IdParamSchema,
+  ErrorSchema,
+  GetLaptopParamSchema,
+  LaptopSchema,
+} from "./schema";
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Laptop } from "./type";
@@ -36,6 +41,7 @@ laptopRoutes.openapi(
     responses: {
       200: {
         description: "Successfully get laptop detail",
+        content: { "application/json": { schema: LaptopSchema } },
       },
       404: {
         description: "Laptop not found",
@@ -54,78 +60,187 @@ laptopRoutes.openapi(
   }
 );
 
-laptopRoutes.post("/", zValidator("json", CreateLaptopSchema), (c) => {
-  const laptopBody = c.req.valid("json");
+laptopRoutes.openapi(
+  {
+    method: "post",
+    path: "/",
+    request: {
+      body: { content: { "application/json": { schema: CreateLaptopSchema } } },
+    },
+    description: "Create new laptop",
+    responses: {
+      201: {
+        content: { "application/json": { schema: CreateLaptopSchema } },
+        description: "Successfully get laptop detail",
+      },
+      400: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Returns an error",
+      },
+    },
+  },
+  (c) => {
+    const laptopBody = c.req.valid("json");
 
-  const newId =
-    dataLaptops.length > 0 ? dataLaptops[dataLaptops.length - 1].id + 1 : 1;
+    const newId =
+      dataLaptops.length > 0 ? dataLaptops[dataLaptops.length - 1].id + 1 : 1;
+
+    const newSlug = slugify(
+      `${laptopBody.brand.toLowerCase()} ${laptopBody.model.toLowerCase()}`
+    );
+
+    const newLaptop: Laptop = {
+      id: newId,
+      slug: newSlug,
+      ...laptopBody,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    dataLaptops = [...dataLaptops, newLaptop];
+
+    return c.json(newLaptop, 201);
+  }
+);
+
+laptopRoutes.openapi(
+  {
+    method: "delete",
+    path: "/",
+    description: "Delete all laptops",
+    responses: {
+      200: {
+        description: "All laptops deleted",
+      },
+    },
+  },
+  (c) => {
+    dataLaptops = [];
+
+    return c.json({
+      message: "All laptops deleted",
+    });
+  }
+);
+
+laptopRoutes.openapi(
+  {
+    method: "delete",
+    path: "/:id",
+    description: "Delete laptop",
+    request: {
+      params: IdParamSchema,
+    },
+    responses: {
+      200: {
+        description: `Laptop deleted`,
+      },
+      404: {
+        description: "Laptop not found",
+      },
+    },
+  },
+  (c) => {
+    const id = Number(c.req.param("id"));
+    const laptop = dataLaptops.find((laptop) => laptop.id === id);
+
+    if (!laptop) {
+      return c.notFound();
+    }
+
+    const updatedLaptops = dataLaptops.filter((laptop) => laptop.id !== id);
+
+    dataLaptops = updatedLaptops;
+
+    return c.json({
+      message: `Laptop ${id} deleted`,
+    });
+  }
+);
+
+laptopRoutes.openapi(
+  {
+    method: "patch",
+    path: "/:id",
+    request: {
+      params: IdParamSchema,
+    },
+    description: "Create new laptop",
+    responses: {
+      200: {
+        content: { "application/json": { schema: LaptopSchema } },
+        description: "Successfully get laptop detail",
+      },
+      400: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Returns an error",
+      },
+      404: {
+        description: "Laptop not found",
+      },
+    },
+  },
+  async (c) => {
+    const id = Number(c.req.param("id"));
+    const laptopBody = await c.req.json();
+
+    const laptop = dataLaptops.find((laptop) => laptop.id === id);
+
+    if (!laptop) {
+      return c.notFound();
+    }
+
+    const updatedLaptop: Laptop = {
+      ...laptop,
+      ...laptopBody,
+      updatedAt: new Date(),
+    };
+
+    const updatedLaptops = dataLaptops.map((laptop) => {
+      if (laptop.id === id) {
+        return updatedLaptop;
+      }
+      return laptop;
+    });
+
+    dataLaptops = updatedLaptops;
+
+    return c.json(updatedLaptop);
+  }
+);
+
+laptopRoutes.put("/:id", async (c) => {
+  const id = Number(c.req.param("id"));
+  const laptopBody = await c.req.json();
 
   const newSlug = slugify(
     `${laptopBody.brand.toLowerCase()} ${laptopBody.model.toLowerCase()}`
   );
 
-  const newLaptop: Laptop = {
-    id: newId,
+  const replacedLaptop: Laptop = {
+    id,
     slug: newSlug,
     ...laptopBody,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
 
-  dataLaptops = [...dataLaptops, newLaptop];
+  let isExistingLaptop = false;
 
-  return c.json(newLaptop, 201);
-});
-
-laptopRoutes.delete("/", (c) => {
-  dataLaptops = [];
-
-  return c.json({
-    message: "All laptops deleted",
-  });
-});
-
-laptopRoutes.delete("/:id", (c) => {
-  const id = Number(c.req.param("id"));
-  const laptop = dataLaptops.find((laptop) => laptop.id === id);
-
-  if (!laptop) {
-    return c.notFound();
-  }
-
-  const updatedLaptops = dataLaptops.filter((laptop) => laptop.id !== id);
-
-  dataLaptops = updatedLaptops;
-
-  return c.json({
-    message: `Laptop ${id} deleted`,
-  });
-});
-
-laptopRoutes.patch("/:id", async (c) => {
-  const id = Number(c.req.param("id"));
-  const laptopBody = await c.req.json();
-
-  const laptop = dataLaptops.find((laptop) => laptop.id === id);
-
-  if (!laptop) {
-    return c.notFound();
-  }
-
-  const updatedLaptop: Laptop = {
-    ...laptop,
-    ...laptopBody,
-    updatedAt: new Date(),
-  };
-
-  const updatedLaptops = dataLaptops.map((laptop) => {
+  const replacedLaptops = dataLaptops.map((laptop) => {
     if (laptop.id === id) {
-      return updatedLaptop;
+      isExistingLaptop = true;
+
+      return replacedLaptop;
     }
     return laptop;
   });
 
-  dataLaptops = updatedLaptops;
+  if (!isExistingLaptop) {
+    dataLaptops = [...dataLaptops, replacedLaptop];
+  } else {
+    dataLaptops = replacedLaptops;
+  }
 
-  return c.json(updatedLaptop);
+  return c.json(replacedLaptop);
 });

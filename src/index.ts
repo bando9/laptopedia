@@ -1,6 +1,5 @@
 import { logger } from "hono/logger";
 import { laptopRoutes } from "./modules/laptops/routes";
-import { commonRoute } from "./modules/common/route";
 import { Scalar } from "@scalar/hono-api-reference";
 import { OpenAPIHono } from "@hono/zod-openapi";
 
@@ -8,7 +7,6 @@ const app = new OpenAPIHono();
 
 app.use(logger());
 
-app.route("/", commonRoute);
 app.route("/laptops", laptopRoutes);
 
 // API Docs

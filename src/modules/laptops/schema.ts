@@ -3,10 +3,6 @@ import { z } from "@hono/zod-openapi";
 export const SlugSchema = z.string().min(3);
 export const DateTimeSchema = z.date();
 
-export const GetLaptopParamSchema = z.object({
-  slug: z.string().min(3),
-});
-
 export const LaptopSchema = z.object({
   id: z.number(),
   brand: z.string(),
@@ -38,4 +34,35 @@ export const CreateLaptopSchema = LaptopSchema.pick({
   weight: true,
   releaseYear: true,
   price: true,
+});
+
+export const UpdateLaptopSchema = LaptopSchema.pick({
+  brand: true,
+  model: true,
+  cpu: true,
+  gpu: true,
+  ram: true,
+  storage: true,
+  display: true,
+  battery: true,
+  weight: true,
+  releaseYear: true,
+  price: true,
+});
+
+export const GetLaptopParamSchema = z.object({
+  slug: SlugSchema,
+});
+
+export const IdParamSchema = z.object({
+  id: z.coerce.number().positive(),
+});
+
+export const ErrorSchema = z.object({
+  code: z.number().openapi({
+    example: 400,
+  }),
+  message: z.string().openapi({
+    example: "Bad Request",
+  }),
 });
