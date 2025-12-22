@@ -1,6 +1,6 @@
 services:
   backend:
-    image: laptopedia1-image
+    image: laptopedia-image
     build:
       context: .
     ports:

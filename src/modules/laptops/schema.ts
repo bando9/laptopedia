@@ -5,8 +5,8 @@ export const DateTimeSchema = z.date();
 
 export const LaptopSchema = z.object({
   id: z.number(),
-  brand: z.string(), 
-  model: z.string(),
+  brand: z.string().min(2),
+  model: z.string().min(2),
   slug: SlugSchema,
   cpu: z.string(),
   gpu: z.string().optional(),

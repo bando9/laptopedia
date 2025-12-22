@@ -231,6 +231,8 @@ laptopRoutes.put("/:id", async (c) => {
     updatedAt: new Date(),
   };
 
+  // TODO: Simplify
+
   let isExistingLaptop = false;
 
   const replacedLaptops = dataLaptops.map((laptop) => {
