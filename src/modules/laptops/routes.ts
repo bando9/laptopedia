@@ -190,9 +190,15 @@ laptopRoutes.openapi(
       return c.notFound();
     }
 
+    const brand = laptopBody.brand || laptop.brand;
+    const model = laptopBody.model || laptop.model;
+
+    const newSlug = slugify(`${brand.toLowerCase()} ${model.toLowerCase()}`);
+
     const updatedLaptop: Laptop = {
       ...laptop,
       ...laptopBody,
+      slug: newSlug,
       updatedAt: new Date(),
     };
 
