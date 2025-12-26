@@ -4,13 +4,13 @@ export const SlugSchema = z.string().min(3);
 export const DateTimeSchema = z.date();
 
 export const LaptopSchema = z.object({
-  id: z.number(),
-  brand: z.string(), 
-  model: z.string(),
+  id: z.number().positive(),
+  brand: z.string().min(2),
+  model: z.string().min(3),
   slug: SlugSchema,
-  cpu: z.string(),
-  gpu: z.string().optional(),
-  ram: z.string().optional(),
+  cpu: z.string().min(3),
+  gpu: z.string().min(3).optional(),
+  ram: z.string().min(2).optional(),
   storage: z.string().optional(),
   display: z.string().optional(),
   battery: z.string().optional(),
@@ -37,6 +37,20 @@ export const CreateLaptopSchema = LaptopSchema.pick({
 });
 
 export const UpdateLaptopSchema = LaptopSchema.pick({
+  brand: true,
+  model: true,
+  cpu: true,
+  gpu: true,
+  ram: true,
+  storage: true,
+  display: true,
+  battery: true,
+  weight: true,
+  releaseYear: true,
+  price: true,
+});
+
+export const PutLaptopSchema = LaptopSchema.pick({
   brand: true,
   model: true,
   cpu: true,

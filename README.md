@@ -30,3 +30,7 @@ To run:
 ```sh
 bun run dev
 ```
+
+## Entity Relationship Diagram (ERD)
+
+![ERD](/src/images/laptopedia.png)

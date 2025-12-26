@@ -214,39 +214,3 @@ laptopRoutes.openapi(
     return c.json(updatedLaptop);
   }
 );
-
-laptopRoutes.put("/:id", async (c) => {
-  const id = Number(c.req.param("id"));
-  const laptopBody = await c.req.json();
-
-  const newSlug = slugify(
-    `${laptopBody.brand.toLowerCase()} ${laptopBody.model.toLowerCase()}`
-  );
-
-  const replacedLaptop: Laptop = {
-    id,
-    slug: newSlug,
-    ...laptopBody,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  let isExistingLaptop = false;
-
-  const replacedLaptops = dataLaptops.map((laptop) => {
-    if (laptop.id === id) {
-      isExistingLaptop = true;
-
-      return replacedLaptop;
-    }
-    return laptop;
-  });
-
-  if (!isExistingLaptop) {
-    dataLaptops = [...dataLaptops, replacedLaptop];
-  } else {
-    dataLaptops = replacedLaptops;
-  }
-
-  return c.json(replacedLaptop);
-});
