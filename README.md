@@ -15,7 +15,7 @@ A modern and lightweight **informational REST API** providing structured and det
 | `/laptops`       | DELETE      | Delete all laptops                                | ✅        |
 | `/laptops/:id`   | DELETE      | Delete one laptop by id                           | ✅        |
 | `/laptops/:id`   | PATCH       | Update laptop by id                               | ✅        |
-| `/laptops/:id`   | PUT         | Update laptop by id. Create data if doesn't exist | ✅        |
+| `/laptops/:id`   | PUT         | Update laptop by id. Create data if doesn't exist |           |
 
 ## Get Started
 
@@ -33,4 +33,4 @@ bun run dev
 
 ## Entity Relationship Diagram (ERD)
 
-![ERD](/src/images/laptopedia.png)
+![ERD](/diagrams/laptopedia-erd.png)
