@@ -214,3 +214,19 @@ laptopRoutes.openapi(
     return c.json(updatedLaptop);
   }
 );
+
+laptopRoutes.put("/:id", async (c) => {
+  const id = Number(c.req.param("id"));
+  const laptopBody = await c.req.json();
+
+  const laptop = dataLaptops.map((laptop) => laptop.id === id);
+
+  // ! TODO: PUT Method
+  // Logic:
+  // if(!laptop) => create, return
+  // if(laptop) => update new data & replace should data exists, return
+
+  console.log(id, laptop, { laptopBody });
+
+  return c.json(id);
+});
