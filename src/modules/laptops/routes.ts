@@ -30,6 +30,18 @@ laptopRoutes.openapi(
   }
 );
 
+laptopRoutes.get("/search", async (c) => {
+  const brand = c.req.query("brand");
+
+  const foundBrands = dataLaptops.filter((laptop) => {
+    if (laptop.brand.toLocaleLowerCase() === brand?.toLocaleLowerCase()) {
+      return laptop;
+    }
+  });
+
+  return c.json(foundBrands);
+});
+
 laptopRoutes.openapi(
   {
     method: "get",
@@ -215,18 +227,18 @@ laptopRoutes.openapi(
   }
 );
 
-laptopRoutes.put("/:id", async (c) => {
-  const id = Number(c.req.param("id"));
-  const laptopBody = await c.req.json();
+// laptopRoutes.put("/:id", async (c) => {
+//   const id = Number(c.req.param("id"));
+//   const laptopBody = await c.req.json();
 
-  const laptop = dataLaptops.map((laptop) => laptop.id === id);
+//   const laptop = dataLaptops.map((laptop) => laptop.id === id);
 
-  // ! TODO: PUT Method
-  // Logic:
-  // if(!laptop) => create, return
-  // if(laptop) => update new data & replace should data exists, return
+//   // ! TODO: PUT Method
+//   // Logic:
+//   // if(!laptop) => create, return
+//   // if(laptop) => update new data & replace should data exists, return
 
-  console.log(id, laptop, { laptopBody });
+//   console.log(id, laptop, { laptopBody });
 
-  return c.json(id);
-});
+//   return c.json(id);
+// });

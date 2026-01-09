@@ -4,13 +4,13 @@ export const SlugSchema = z.string().min(3);
 export const DateTimeSchema = z.date();
 
 export const LaptopSchema = z.object({
-  id: z.number().positive(),
-  brand: z.string().min(2),
-  model: z.string().min(3),
+  id: z.number("not a number").positive(),
+  brand: z.string("Not a string").min(2, "Too short !"),
+  model: z.string("Not a string").min(3, "Too short!"),
   slug: SlugSchema,
-  cpu: z.string().min(3),
-  gpu: z.string().min(3).optional(),
-  ram: z.string().min(2).optional(),
+  cpu: z.string().min(3, "Too short!"),
+  gpu: z.string().min(3, "Too short!").optional(),
+  ram: z.string().min(2, "Too short!").optional(),
   storage: z.string().optional(),
   display: z.string().optional(),
   battery: z.string().optional(),
