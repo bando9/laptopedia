@@ -20,7 +20,6 @@ model Laptop  {
   model String
   slug String
   cpu String
-
   releaseYear Int
   price Int
 
