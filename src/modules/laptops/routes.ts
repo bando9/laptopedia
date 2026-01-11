@@ -9,6 +9,7 @@ import {
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Laptop } from "./type";
+import { prisma } from "../../lib/prisma";
 
 export const laptopRoutes = new OpenAPIHono();
 
@@ -25,8 +26,9 @@ laptopRoutes.openapi(
       },
     },
   },
-  (c) => {
-    return c.json(dataLaptops);
+  async (c) => {
+    const laptops = await prisma.laptop.findMany();
+    return c.json(laptops);
   }
 );
 
