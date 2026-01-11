@@ -18,8 +18,8 @@ model Laptop  {
   
   brand String 
   model String
-  slug String
-  cpu String
+  slug String @unique @db.VarChar(300)
+  cpu String?
   releaseYear Int
   price Int
 
