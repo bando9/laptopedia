@@ -1,4 +1,3 @@
-import { initialDataLaptops } from "./data";
 import {
   CreateLaptopSchema,
   IdParamSchema,
@@ -9,10 +8,9 @@ import {
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Laptop } from "./type";
+import { prisma } from "../../lib/prisma";
 
 export const laptopRoutes = new OpenAPIHono();
-
-let dataLaptops = initialDataLaptops;
 
 laptopRoutes.openapi(
   {
@@ -25,21 +23,16 @@ laptopRoutes.openapi(
       },
     },
   },
-  (c) => {
-    return c.json(dataLaptops);
+  async (c) => {
+    const laptops = await prisma.laptop.findMany();
+    return c.json(laptops);
   }
 );
 
 laptopRoutes.get("/search", async (c) => {
   const brand = c.req.query("brand");
 
-  const foundBrands = dataLaptops.filter((laptop) => {
-    if (laptop.brand.toLocaleLowerCase() === brand?.toLocaleLowerCase()) {
-      return laptop;
-    }
-  });
-
-  return c.json(foundBrands);
+  return c.json([]);
 });
 
 laptopRoutes.openapi(
@@ -61,14 +54,7 @@ laptopRoutes.openapi(
     },
   },
   (c) => {
-    const slug = c.req.param("slug");
-    const laptop = dataLaptops.find((laptop) => laptop.slug === slug);
-
-    if (!laptop) {
-      return c.json("Laptop not found", 404);
-    }
-
-    return c.json(laptop, 200);
+    return c.json({}, 200);
   }
 );
 
@@ -94,24 +80,7 @@ laptopRoutes.openapi(
   (c) => {
     const laptopBody = c.req.valid("json");
 
-    const newId =
-      dataLaptops.length > 0 ? dataLaptops[dataLaptops.length - 1].id + 1 : 1;
-
-    const newSlug = slugify(
-      `${laptopBody.brand.toLowerCase()} ${laptopBody.model.toLowerCase()}`
-    );
-
-    const newLaptop: Laptop = {
-      id: newId,
-      slug: newSlug,
-      ...laptopBody,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    dataLaptops = [...dataLaptops, newLaptop];
-
-    return c.json(newLaptop, 201);
+    return c.json({}, 201);
   }
 );
 
@@ -127,8 +96,6 @@ laptopRoutes.openapi(
     },
   },
   (c) => {
-    dataLaptops = [];
-
     return c.json({
       message: "All laptops deleted",
     });
@@ -154,15 +121,6 @@ laptopRoutes.openapi(
   },
   (c) => {
     const id = Number(c.req.param("id"));
-    const laptop = dataLaptops.find((laptop) => laptop.id === id);
-
-    if (!laptop) {
-      return c.notFound();
-    }
-
-    const updatedLaptops = dataLaptops.filter((laptop) => laptop.id !== id);
-
-    dataLaptops = updatedLaptops;
 
     return c.json({
       message: `Laptop ${id} deleted`,
@@ -196,49 +154,6 @@ laptopRoutes.openapi(
     const id = Number(c.req.param("id"));
     const laptopBody = await c.req.json();
 
-    const laptop = dataLaptops.find((laptop) => laptop.id === id);
-
-    if (!laptop) {
-      return c.notFound();
-    }
-
-    const brand = laptopBody.brand || laptop.brand;
-    const model = laptopBody.model || laptop.model;
-
-    const newSlug = slugify(`${brand.toLowerCase()} ${model.toLowerCase()}`);
-
-    const updatedLaptop: Laptop = {
-      ...laptop,
-      ...laptopBody,
-      slug: newSlug,
-      updatedAt: new Date(),
-    };
-
-    const updatedLaptops = dataLaptops.map((laptop) => {
-      if (laptop.id === id) {
-        return updatedLaptop;
-      }
-      return laptop;
-    });
-
-    dataLaptops = updatedLaptops;
-
-    return c.json(updatedLaptop);
+    return c.json({});
   }
 );
-
-// laptopRoutes.put("/:id", async (c) => {
-//   const id = Number(c.req.param("id"));
-//   const laptopBody = await c.req.json();
-
-//   const laptop = dataLaptops.map((laptop) => laptop.id === id);
-
-//   // ! TODO: PUT Method
-//   // Logic:
-//   // if(!laptop) => create, return
-//   // if(laptop) => update new data & replace should data exists, return
-
-//   console.log(id, laptop, { laptopBody });
-
-//   return c.json(id);
-// });
