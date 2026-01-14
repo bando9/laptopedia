@@ -62,7 +62,7 @@ laptopRoutes.openapi(
       },
     },
   },
-  (c) => {
+  async (c) => {
     const slug = c.req.param("slug");
     const laptop = dataLaptops.find((laptop) => laptop.slug === slug);
 
