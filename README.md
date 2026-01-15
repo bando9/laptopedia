@@ -2,6 +2,15 @@
 
 A modern and lightweight **informational REST API** providing structured and detailed information about laptops, including specifications, brands, categories, hardware components, and pricing insights.
 
+## Tech Stacks
+
+- [Bun](https://bun.sh)
+- [Hono](https://hono.dev/)
+- [Typescript](https://www.typescriptlang.org/)
+- [Prisma](https://www.prisma.io/)
+- [Zod](https://zod.dev/)
+- [Scalar](https://scalar.com/)
+
 ## REST API Specification
 
 - Local: <http://localhost:3000>

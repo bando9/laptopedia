@@ -1,4 +1,3 @@
-import { initialDataLaptops } from "./data";
 import {
   CreateLaptopSchema,
   IdParamSchema,
@@ -12,8 +11,6 @@ import { Laptop } from "./type";
 import { prisma } from "../../lib/prisma";
 
 export const laptopRoutes = new OpenAPIHono();
-
-let dataLaptops = initialDataLaptops;
 
 laptopRoutes.openapi(
   {
@@ -32,17 +29,17 @@ laptopRoutes.openapi(
   }
 );
 
-laptopRoutes.get("/search", async (c) => {
-  const brand = c.req.query("brand");
+// laptopRoutes.get("/search", async (c) => {
+//   const brand = c.req.query("brand");
 
-  const foundBrands = dataLaptops.filter((laptop) => {
-    if (laptop.brand.toLocaleLowerCase() === brand?.toLocaleLowerCase()) {
-      return laptop;
-    }
-  });
+//   const foundBrands = dataLaptops.filter((laptop) => {
+//     if (laptop.brand.toLocaleLowerCase() === brand?.toLocaleLowerCase()) {
+//       return laptop;
+//     }
+//   });
 
-  return c.json(foundBrands);
-});
+//   return c.json(foundBrands);
+// });
 
 laptopRoutes.openapi(
   {
@@ -64,7 +61,12 @@ laptopRoutes.openapi(
   },
   async (c) => {
     const slug = c.req.param("slug");
-    const laptop = dataLaptops.find((laptop) => laptop.slug === slug);
+    const laptop = await prisma.laptop.findUnique({
+      where: {
+        slug: slug,
+      },
+    });
+    console.log(laptop);
 
     if (!laptop) {
       return c.json("Laptop not found", 404);
