@@ -427,3 +427,17 @@ export let initialDataLaptops: Laptops = [
     updatedAt: new Date(),
   },
 ];
+
+export let examplePostLaptop = {
+  brand: "Apple",
+  model: "MacBook Pro M3 Max",
+  cpu: "Apple M3 Max (14-core)",
+  gpu: "Apple M3 Max (30-core GPU)",
+  ram: "36GB Unified Memory",
+  storage: "1TB SSD",
+  display: "14.2-inch Liquid Retina XDR",
+  battery: null,
+  weight: null,
+  releaseYear: 2024,
+  price: 55999000,
+};
