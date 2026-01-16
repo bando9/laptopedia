@@ -8,9 +8,11 @@ import {
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
+import { Laptop } from "./type";
 
 export const laptopRoutes = new OpenAPIHono();
 
+// GET All Laptop
 laptopRoutes.openapi(
   {
     method: "get",
@@ -37,6 +39,7 @@ laptopRoutes.openapi(
 //   return c.json(foundLaptops);
 // });
 
+// GET Laptop by Slug
 laptopRoutes.openapi(
   {
     method: "get",
@@ -72,6 +75,7 @@ laptopRoutes.openapi(
   }
 );
 
+// CREATE new Laptop
 laptopRoutes.openapi(
   {
     method: "post",
@@ -105,12 +109,10 @@ laptopRoutes.openapi(
     });
 
     return c.json(newLaptop, 201);
-
-    // console.log(error);
-    // return c.json({ error: "Failed to create Laptop" });
   }
 );
 
+// DELETE All Laptop
 laptopRoutes.openapi(
   {
     method: "delete",
@@ -131,6 +133,7 @@ laptopRoutes.openapi(
   }
 );
 
+// DELETE Laptop by Id
 laptopRoutes.openapi(
   {
     method: "delete",
@@ -167,59 +170,44 @@ laptopRoutes.openapi(
   }
 );
 
-// laptopRoutes.openapi(
-//   {
-//     method: "patch",
-//     path: "/{id}",
-//     request: {
-//       params: IdParamSchema,
-//     },
-//     description: "Create new laptop",
-//     responses: {
-//       200: {
-//         content: { "application/json": { schema: LaptopSchema } },
-//         description: "Successfully get laptop detail",
-//       },
-//       400: {
-//         content: { "application/json": { schema: ErrorSchema } },
-//         description: "Returns an error",
-//       },
-//       404: {
-//         description: "Laptop not found",
-//       },
-//     },
-//   },
-//   async (c) => {
-//     const id = Number(c.req.param("id"));
-//     const laptopBody = await c.req.json();
+// UPDATE Laptop by Id
+laptopRoutes.openapi(
+  {
+    method: "patch",
+    path: "/{id}",
+    request: {
+      params: IdParamSchema,
+    },
+    description: "Update Laptop",
+    responses: {
+      200: {
+        content: { "application/json": { schema: LaptopSchema } },
+        description: "Successfully get laptop detail",
+      },
+      404: {
+        description: "Laptop not found",
+      },
+    },
+  },
+  async (c) => {
+    const id = Number(c.req.param("id"));
+    const laptopBody = await c.req.json();
+    const laptop = await prisma.laptop.findUnique({ where: { id: id } });
 
-//     const laptop = dataLaptops.find((laptop) => laptop.id === id);
+    if (!laptop) {
+      return c.json("Laptop not found", 404);
+    }
 
-//     if (!laptop) {
-//       return c.notFound();
-//     }
+    const brand = laptopBody.brand || laptop?.brand;
+    const model = laptopBody.model || laptop?.model;
 
-//     const brand = laptopBody.brand || laptop.brand;
-//     const model = laptopBody.model || laptop.model;
+    const newSlug = slugify(`${brand.toLowerCase()} ${model.toLowerCase()}`);
 
-//     const newSlug = slugify(`${brand.toLowerCase()} ${model.toLowerCase()}`);
+    const updatedLaptop = await prisma.laptop.update({
+      where: { id: id },
+      data: { ...laptop, ...laptopBody, slug: newSlug, updatedAt: new Date() },
+    });
 
-//     const updatedLaptop: Laptop = {
-//       ...laptop,
-//       ...laptopBody,
-//       slug: newSlug,
-//       updatedAt: new Date(),
-//     };
-
-//     const updatedLaptops = dataLaptops.map((laptop) => {
-//       if (laptop.id === id) {
-//         return updatedLaptop;
-//       }
-//       return laptop;
-//     });
-
-//     dataLaptops = updatedLaptops;
-
-//     return c.json(updatedLaptop);
-//   }
-// );
+    return c.json(updatedLaptop);
+  }
+);
