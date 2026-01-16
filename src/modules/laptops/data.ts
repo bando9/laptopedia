@@ -1,6 +1,6 @@
-import { Laptops } from "./type";
+import { BrandsType, Laptops } from "./type";
 
-export let initialDataLaptops: Laptops = [
+export const initialDataLaptops: Laptops = [
   {
     id: 1,
     brand: "Asus",
@@ -425,6 +425,55 @@ export let initialDataLaptops: Laptops = [
     price: 32999000,
     createdAt: new Date(),
     updatedAt: new Date(),
+  },
+];
+
+export const brands: BrandsType = [
+  {
+    name: "Asus",
+    slug: "asus",
+    imageUrl:
+      "https://logos-world.net/wp-content/uploads/2020/07/Asus-Logo-1995-present.png",
+    createdAt: new Date(),
+  },
+  {
+    name: "Apple",
+    slug: "apple",
+    imageUrl:
+      "https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png",
+    createdAt: new Date(),
+  },
+  {
+    name: "Lenovo",
+    slug: "lenovo",
+    imageUrl:
+      "https://logos-world.net/wp-content/uploads/2022/07/Lenovo-Logo.png",
+    createdAt: new Date(),
+  },
+  {
+    name: "Acer",
+    slug: "acer",
+    imageUrl:
+      "https://logos-world.net/wp-content/uploads/2022/11/Acer-Logo.png",
+    createdAt: new Date(),
+  },
+  {
+    name: "HP",
+    slug: "hp",
+    imageUrl: "https://logos-world.net/wp-content/uploads/2020/11/HP-Logo.png",
+    createdAt: new Date(),
+  },
+  {
+    name: "Dell",
+    slug: "dell",
+    imageUrl: "https://logos-world.net/wp-content/uploads/2020/11/HP-Logo.png",
+    createdAt: new Date(),
+  },
+  {
+    name: "MSI",
+    slug: "msi",
+    imageUrl: "https://logos-world.net/wp-content/uploads/2020/11/MSI-Logo.png",
+    createdAt: new Date(),
   },
 ];
 

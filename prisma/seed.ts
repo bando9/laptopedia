@@ -1,43 +1,31 @@
 import { prisma } from "../src/lib/prisma";
-import { initialDataLaptops } from "../src/modules/laptops/data";
+import { brands, initialDataLaptops } from "../src/modules/laptops/data";
 
 async function main() {
-  for (const laptop of initialDataLaptops) {
-    await prisma.laptop.upsert({
-      where: { slug: laptop.slug },
-      update: {
-        brand: laptop.brand,
-        model: laptop.model,
-        slug: laptop.slug,
-        cpu: laptop.cpu,
-        gpu: laptop.gpu,
-        ram: laptop.ram,
-        storage: laptop.storage,
-        display: laptop.display,
-        battery: laptop.battery,
-        weight: laptop.weight,
+  console.log("Seeding process...");
+  const createBrands = await Promise.all(
+    brands.map((b) => prisma.brand.create({ data: b }))
+  );
 
-        releaseYear: laptop.releaseYear,
-        price: laptop.price,
-      },
-      create: {
-        brand: laptop.brand,
-        model: laptop.model,
-        slug: laptop.slug,
-        cpu: laptop.cpu,
-        gpu: laptop.gpu,
-        ram: laptop.ram,
-        storage: laptop.storage,
-        display: laptop.display,
-        battery: laptop.battery,
-        weight: laptop.weight,
-        releaseYear: laptop.releaseYear,
-        price: laptop.price,
-      },
-    });
+  const brandMap = Object.fromEntries(
+    createBrands.map((brand) => {
+      console.log(`🏷️  Brand: ${brand.slug}`);
+      return [brand.name, brand.id];
+    })
+  );
 
-    console.log(`💻 Laptop: ${laptop.slug}`);
-  }
+  await Promise.all(
+    initialDataLaptops.map((laptop) => {
+      const { brand, ...dataLaptop } = laptop;
+      console.log(`💻 Laptop: ${laptop.slug}`);
+      return prisma.laptop.create({
+        data: {
+          ...dataLaptop,
+          brandId: brandMap[brand],
+        },
+      });
+    })
+  );
 }
 
 main()

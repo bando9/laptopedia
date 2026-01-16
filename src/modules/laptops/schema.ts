@@ -82,3 +82,11 @@ export const ErrorSchema = z.object({
     example: "Bad Request",
   }),
 });
+
+export const BrandSchema = z.object({
+  name: z.string(),
+  slug: SlugSchema,
+  imageUrl: z.string(),
+  createdAt: DateTimeSchema,
+});
+export const BrandsSchema = BrandSchema.array();
