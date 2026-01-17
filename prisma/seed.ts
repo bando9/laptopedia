@@ -16,7 +16,7 @@ async function main() {
 
   await Promise.all(
     initialDataLaptops.map((laptop) => {
-      const { brand, ...dataLaptop } = laptop;
+      const { brandName: brand, ...dataLaptop } = laptop;
       console.log(`💻 Laptop: ${laptop.slug}`);
       return prisma.laptop.create({
         data: {

@@ -2,10 +2,29 @@ import { z } from "@hono/zod-openapi";
 
 export const SlugSchema = z.string().min(3);
 export const DateTimeSchema = z.date();
+export const IdSchema = z.number("not a number").positive();
 
+// Base Brand Schema
+export const BrandSchema = z.object({
+  id: IdSchema,
+  name: z.string(),
+  slug: SlugSchema,
+  imageUrl: z.string().nullable(),
+  createdAt: DateTimeSchema,
+  updatedAt: DateTimeSchema,
+});
+export const CreateBrandSchema = BrandSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export const CreateBrandsSchema = CreateBrandSchema.array();
+
+// Base Laptop Schema
 export const LaptopSchema = z.object({
-  id: z.number("not a number").positive(),
-  brand: z.string("Not a string").min(2, "Too short !"),
+  id: IdSchema,
+  brandId: z.int(),
+  brand: BrandSchema,
   model: z.string("Not a string").min(3, "Too short!"),
   slug: SlugSchema,
   cpu: z.string().min(3, "Too short!"),
@@ -22,21 +41,26 @@ export const LaptopSchema = z.object({
   createdAt: DateTimeSchema,
   updatedAt: DateTimeSchema,
 });
-export const LaptopsSchema = LaptopSchema.array();
 
-export const CreateLaptopSchema = LaptopSchema.pick({
+export const CreateLaptopWithoutAutoGenSchema = LaptopSchema.omit({
+  id: true,
+  brandId: true,
   brand: true,
-  model: true,
-  cpu: true,
-  gpu: true,
-  ram: true,
-  storage: true,
-  display: true,
-  battery: true,
-  weight: true,
-  releaseYear: true,
-  price: true,
+  createdAt: true,
+  updatedAt: true,
 });
+
+export const CreateLaptopWithoutSlugSchema =
+  CreateLaptopWithoutAutoGenSchema.omit({ slug: true });
+
+export const CreateLaptopSchema = CreateLaptopWithoutSlugSchema.extend({
+  brandName: z.string().min(2),
+});
+
+const SeedLaptopSchema = CreateLaptopWithoutAutoGenSchema.extend({
+  brandName: z.string().min(2),
+});
+export const SeedLaptopsSchema = SeedLaptopSchema.array();
 
 export const UpdateLaptopSchema = LaptopSchema.pick({
   brand: true,
@@ -82,11 +106,3 @@ export const ErrorSchema = z.object({
     example: "Bad Request",
   }),
 });
-
-export const BrandSchema = z.object({
-  name: z.string(),
-  slug: SlugSchema,
-  imageUrl: z.string(),
-  createdAt: DateTimeSchema,
-});
-export const BrandsSchema = BrandSchema.array();

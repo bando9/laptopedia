@@ -1,14 +1,14 @@
 import {
-  CreateLaptopSchema,
   IdParamSchema,
-  ErrorSchema,
+  // ErrorSchema,
   GetLaptopParamSchema,
   LaptopSchema,
+  CreateLaptopSchema,
 } from "./schema";
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
-import { Laptop } from "./type";
+import { CreateLaptopType, Laptop } from "./type";
 
 export const laptopRoutes = new OpenAPIHono();
 
@@ -25,7 +25,9 @@ laptopRoutes.openapi(
     },
   },
   async (c) => {
-    const laptops = await prisma.laptop.findMany();
+    const laptops = await prisma.laptop.findMany({
+      include: { brand: true },
+    });
     return c.json(laptops);
   }
 );
@@ -62,9 +64,8 @@ laptopRoutes.openapi(
     const slug = c.req.param("slug");
 
     const laptop = await prisma.laptop.findUnique({
-      where: {
-        slug: slug,
-      },
+      where: { slug: slug },
+      include: { brand: true },
     });
 
     if (!laptop) {
@@ -81,7 +82,11 @@ laptopRoutes.openapi(
     method: "post",
     path: "/",
     request: {
-      body: { content: { "application/json": { schema: CreateLaptopSchema } } },
+      body: {
+        content: {
+          "application/json": { schema: CreateLaptopSchema },
+        },
+      },
     },
     description: "Create new laptop",
     responses: {
@@ -89,26 +94,31 @@ laptopRoutes.openapi(
         content: { "application/json": { schema: LaptopSchema } },
         description: "Successfully created laptop",
       },
-      400: {
-        content: { "application/json": { schema: ErrorSchema } },
-        description: "Returns an error",
-      },
     },
   },
   async (c) => {
-    const laptopBody = c.req.valid("json");
+    try {
+      const { brandName, ...laptopBody } = c.req.valid("json");
 
-    const newSlug = slugify(
-      `${laptopBody.brand.toLowerCase()} ${laptopBody.model.toLowerCase()}`
-    );
-    const newLaptop = await prisma.laptop.create({
-      data: {
-        ...laptopBody,
-        slug: newSlug,
-      },
-    });
+      const newSlug = slugify(
+        `${brandName.toLowerCase()} ${laptopBody.model.toLowerCase()}`
+      );
 
-    return c.json(newLaptop, 201);
+      const newLaptop = await prisma.laptop.create({
+        data: {
+          ...laptopBody,
+          slug: newSlug,
+          brand: {
+            connect: { name: brandName },
+          },
+        },
+        include: { brand: true },
+      });
+
+      return c.json(newLaptop, 201);
+    } catch (error: any) {
+      return c.json({ message: "Internal Server Error" }, 500);
+    }
   }
 );
 
@@ -171,43 +181,43 @@ laptopRoutes.openapi(
 );
 
 // UPDATE Laptop by Id
-laptopRoutes.openapi(
-  {
-    method: "patch",
-    path: "/{id}",
-    request: {
-      params: IdParamSchema,
-    },
-    description: "Update Laptop",
-    responses: {
-      200: {
-        content: { "application/json": { schema: LaptopSchema } },
-        description: "Successfully get laptop detail",
-      },
-      404: {
-        description: "Laptop not found",
-      },
-    },
-  },
-  async (c) => {
-    const id = Number(c.req.param("id"));
-    const laptopBody = await c.req.json();
-    const laptop = await prisma.laptop.findUnique({ where: { id: id } });
+// laptopRoutes.openapi(
+//   {
+//     method: "patch",
+//     path: "/{id}",
+//     request: {
+//       params: IdParamSchema,
+//     },
+//     description: "Update Laptop",
+//     responses: {
+//       200: {
+//         content: { "application/json": { schema: LaptopSchema } },
+//         description: "Successfully get laptop detail",
+//       },
+//       404: {
+//         description: "Laptop not found",
+//       },
+//     },
+//   },
+//   async (c) => {
+//     const id = Number(c.req.param("id"));
+//     const laptopBody = await c.req.json();
+//     const laptop = await prisma.laptop.findUnique({ where: { id: id } });
 
-    if (!laptop) {
-      return c.json("Laptop not found", 404);
-    }
+//     if (!laptop) {
+//       return c.json("Laptop not found", 404);
+//     }
 
-    const brand = laptopBody.brand || laptop?.brand;
-    const model = laptopBody.model || laptop?.model;
+//     const brand = laptopBody.brand || laptop?.brand;
+//     const model = laptopBody.model || laptop?.model;
 
-    const newSlug = slugify(`${brand.toLowerCase()} ${model.toLowerCase()}`);
+//     const newSlug = slugify(`${brand.toLowerCase()} ${model.toLowerCase()}`);
 
-    const updatedLaptop = await prisma.laptop.update({
-      where: { id: id },
-      data: { ...laptop, ...laptopBody, slug: newSlug, updatedAt: new Date() },
-    });
+//     const updatedLaptop = await prisma.laptop.update({
+//       where: { id: id },
+//       data: { ...laptop, ...laptopBody, slug: newSlug, updatedAt: new Date() },
+//     });
 
-    return c.json(updatedLaptop);
-  }
-);
+//     return c.json(updatedLaptop);
+//   }
+// );
