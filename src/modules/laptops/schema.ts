@@ -19,6 +19,8 @@ export const BrandSchema = z.object({
   createdAt: DateTimeSchema,
   updatedAt: DateTimeSchema,
 });
+export const BrandsSchema = BrandSchema.array();
+
 export const CreateBrandSchema = BrandSchema.omit({
   id: true,
   createdAt: true,

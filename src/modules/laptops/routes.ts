@@ -28,12 +28,15 @@ export const laptopRoutes = new OpenAPIHono({
   },
 });
 
+const tags = ["laptops"];
+
 // GET All Laptop
 laptopRoutes.openapi(
   {
     method: "get",
     path: "/",
     description: "Get all laptops",
+    tags,
     responses: {
       200: {
         description: "Successfully get all laptops",
@@ -66,6 +69,7 @@ laptopRoutes.openapi(
       params: GetLaptopParamSchema,
     },
     description: "Get one laptop by slug",
+    tags,
     responses: {
       200: {
         description: "Successfully get laptop detail",
@@ -106,6 +110,7 @@ laptopRoutes.openapi(
       },
     },
     description: "Create new laptop",
+    tags,
     responses: {
       201: {
         content: { "application/json": { schema: LaptopSchema } },
@@ -154,6 +159,7 @@ laptopRoutes.openapi(
     method: "delete",
     path: "/",
     description: "Delete all laptops",
+    tags,
     responses: {
       200: {
         description: "All laptops deleted",
@@ -178,6 +184,7 @@ laptopRoutes.openapi(
     request: {
       params: IdParamSchema,
     },
+    tags,
     responses: {
       200: {
         description: `Laptop deleted`,
@@ -216,6 +223,7 @@ laptopRoutes.openapi(
       body: { content: { "application/json": { schema: UpdateLaptopSchema } } },
     },
     description: "Update Laptop",
+    tags,
     responses: {
       200: {
         content: { "application/json": { schema: CreateLaptopSchema } },

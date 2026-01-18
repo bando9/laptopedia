@@ -2,15 +2,19 @@ import { logger } from "hono/logger";
 import { laptopRoutes } from "./modules/laptops/routes";
 import { Scalar } from "@scalar/hono-api-reference";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { brandRoutes } from "./modules/brands/routes";
 
 const app = new OpenAPIHono();
 
 app.use(logger());
 
-app.route("/laptops", laptopRoutes);
+// Configure API Routes
+const apiRoutes = app
+  .route("/laptops", laptopRoutes)
+  .route("/brands", brandRoutes);
 
 // API Docs
-app.doc("/openapi.json", {
+apiRoutes.doc("/openapi.json", {
   openapi: "3.0.0",
   info: {
     version: "1.0.0",
