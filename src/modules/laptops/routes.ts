@@ -1,16 +1,30 @@
 import {
   IdParamSchema,
-  // ErrorSchema,
   GetLaptopParamSchema,
   LaptopSchema,
   CreateLaptopSchema,
+  ErrorSchema,
 } from "./schema";
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
-import { CreateLaptopType, Laptop } from "./type";
 
-export const laptopRoutes = new OpenAPIHono();
+export const laptopRoutes = new OpenAPIHono({
+  defaultHook: (result, c) => {
+    if (!result.success) {
+      return c.json(
+        {
+          message: "Validation failed",
+          errors: result.error.issues.map((issue) => ({
+            field: issue.path.join("."),
+            message: issue.message,
+          })),
+        },
+        400,
+      );
+    }
+  },
+});
 
 // GET All Laptop
 laptopRoutes.openapi(
@@ -29,7 +43,7 @@ laptopRoutes.openapi(
       include: { brand: true },
     });
     return c.json(laptops);
-  }
+  },
 );
 
 // laptopRoutes.get("/search", async (c) => {
@@ -73,7 +87,7 @@ laptopRoutes.openapi(
     }
 
     return c.json(laptop);
-  }
+  },
 );
 
 // CREATE new Laptop
@@ -94,6 +108,14 @@ laptopRoutes.openapi(
         content: { "application/json": { schema: LaptopSchema } },
         description: "Successfully created laptop",
       },
+      400: {
+        content: { "applicatoin/json": { schema: ErrorSchema } },
+        description: "Validation Error / Bad Request",
+      },
+      500: {
+        content: { "applicatoin/json": { schema: ErrorSchema } },
+        description: "Internal Server Error",
+      },
     },
   },
   async (c) => {
@@ -101,7 +123,7 @@ laptopRoutes.openapi(
       const { brandName, ...laptopBody } = c.req.valid("json");
 
       const newSlug = slugify(
-        `${brandName.toLowerCase()} ${laptopBody.model.toLowerCase()}`
+        `${brandName.toLowerCase()} ${laptopBody.model.toLowerCase()}`,
       );
 
       const newLaptop = await prisma.laptop.create({
@@ -117,9 +139,10 @@ laptopRoutes.openapi(
 
       return c.json(newLaptop, 201);
     } catch (error: any) {
+      console.log(error);
       return c.json({ message: "Internal Server Error" }, 500);
     }
-  }
+  },
 );
 
 // DELETE All Laptop
@@ -140,7 +163,7 @@ laptopRoutes.openapi(
     return c.json({
       message: "All laptops deleted",
     });
-  }
+  },
 );
 
 // DELETE Laptop by Id
@@ -177,7 +200,7 @@ laptopRoutes.openapi(
     } else {
       return c.json({ message: "Laptop not found" }, 404);
     }
-  }
+  },
 );
 
 // UPDATE Laptop by Id
