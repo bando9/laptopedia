@@ -69,24 +69,12 @@ export const CreateLaptopSchema = CreateLaptopWithoutSlugSchema.extend({
   brandName: z.string().min(2),
 });
 
+export const UpdateLaptopSchema = CreateLaptopSchema.partial();
+
 const SeedLaptopSchema = CreateLaptopWithoutAutoGenSchema.extend({
   brandName: z.string().min(2),
 });
 export const SeedLaptopsSchema = SeedLaptopSchema.array();
-
-export const UpdateLaptopSchema = LaptopSchema.pick({
-  brand: true,
-  model: true,
-  cpu: true,
-  gpu: true,
-  ram: true,
-  storage: true,
-  display: true,
-  battery: true,
-  weight: true,
-  releaseYear: true,
-  price: true,
-});
 
 export const PutLaptopSchema = LaptopSchema.pick({
   brand: true,

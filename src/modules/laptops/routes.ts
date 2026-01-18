@@ -4,10 +4,12 @@ import {
   LaptopSchema,
   CreateLaptopSchema,
   ErrorSchema,
+  UpdateLaptopSchema,
 } from "./schema";
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
+import { CreateLaptopType } from "./type";
 
 export const laptopRoutes = new OpenAPIHono({
   defaultHook: (result, c) => {
@@ -70,6 +72,7 @@ laptopRoutes.openapi(
         content: { "application/json": { schema: LaptopSchema } },
       },
       404: {
+        content: { "applicatoin/json": { schema: ErrorSchema } },
         description: "Laptop not found",
       },
     },
@@ -83,10 +86,10 @@ laptopRoutes.openapi(
     });
 
     if (!laptop) {
-      return c.json("Laptop not found");
+      return c.json("Laptop not found", 404);
     }
 
-    return c.json(laptop);
+    return c.json(laptop, 200);
   },
 );
 
@@ -204,43 +207,75 @@ laptopRoutes.openapi(
 );
 
 // UPDATE Laptop by Id
-// laptopRoutes.openapi(
-//   {
-//     method: "patch",
-//     path: "/{id}",
-//     request: {
-//       params: IdParamSchema,
-//     },
-//     description: "Update Laptop",
-//     responses: {
-//       200: {
-//         content: { "application/json": { schema: LaptopSchema } },
-//         description: "Successfully get laptop detail",
-//       },
-//       404: {
-//         description: "Laptop not found",
-//       },
-//     },
-//   },
-//   async (c) => {
-//     const id = Number(c.req.param("id"));
-//     const laptopBody = await c.req.json();
-//     const laptop = await prisma.laptop.findUnique({ where: { id: id } });
+laptopRoutes.openapi(
+  {
+    method: "patch",
+    path: "/{id}",
+    request: {
+      params: IdParamSchema,
+      body: { content: { "application/json": { schema: UpdateLaptopSchema } } },
+    },
+    description: "Update Laptop",
+    responses: {
+      200: {
+        content: { "application/json": { schema: CreateLaptopSchema } },
+        description: "Successfully get laptop detail",
+      },
+      404: {
+        description: "Laptop not found",
+      },
+      400: {
+        content: { "applicatoin/json": { schema: ErrorSchema } },
+        description: "Brand not found",
+      },
+      500: {
+        content: { "applicatoin/json": { schema: ErrorSchema } },
+        description: "Internal Server Error",
+      },
+    },
+  },
+  async (c) => {
+    const id = Number(c.req.param("id"));
+    const { brandName, ...laptopBody }: CreateLaptopType = await c.req.json();
 
-//     if (!laptop) {
-//       return c.json("Laptop not found", 404);
-//     }
+    try {
+      const laptop = await prisma.laptop.findUnique({
+        where: { id: id },
+        include: { brand: true },
+      });
 
-//     const brand = laptopBody.brand || laptop?.brand;
-//     const model = laptopBody.model || laptop?.model;
+      if (!laptop) {
+        return c.json("Laptop not found", 404);
+      }
 
-//     const newSlug = slugify(`${brand.toLowerCase()} ${model.toLowerCase()}`);
+      let newSlug = laptop.slug;
 
-//     const updatedLaptop = await prisma.laptop.update({
-//       where: { id: id },
-//       data: { ...laptop, ...laptopBody, slug: newSlug, updatedAt: new Date() },
-//     });
+      if (laptopBody.model || brandName) {
+        const brand = brandName || laptop.brand.name;
+        const model = laptopBody.model || laptop.model;
 
-//     return c.json(updatedLaptop);
-//   }
-// );
+        newSlug = slugify(`${brand.toLowerCase()} ${model.toLowerCase()}`);
+      }
+
+      const updatedLaptop = await prisma.laptop.update({
+        where: { id: id },
+        data: {
+          ...laptopBody,
+          ...(brandName && {
+            brand: { connect: { name: brandName } },
+          }),
+          slug: newSlug,
+          updatedAt: new Date(),
+        },
+        include: { brand: true },
+      });
+
+      return c.json(updatedLaptop, 200);
+    } catch (error: any) {
+      if (error.code == "P2025") {
+        return c.json("Brand not Found", 400);
+      }
+      return c.json("Internal Servel Error", 500);
+    }
+  },
+);
