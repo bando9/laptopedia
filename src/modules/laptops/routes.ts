@@ -51,14 +51,55 @@ laptopRoutes.openapi(
   },
 );
 
-// laptopRoutes.get("/search", async (c) => {
-//   const {} = c.req.query();
-//   const foundLaptops = await prisma.laptop.findMany({
-//     where: {},
-//   });
+laptopRoutes.openapi(
+  {
+    method: "get",
+    path: "/search",
+    tags,
+    description: "Search laptop by query",
+    responses: {
+      200: {
+        description: "Successfully get laptop detail",
+        content: { "application/json": { schema: LaptopSchema } },
+      },
+      404: {
+        content: { "applicatoin/json": { schema: ErrorSchema } },
+        description: "Laptop not found",
+      },
+    },
+  },
+  async (c) => {
+    try {
+      const { cpu, gpu, slug } = c.req.query();
 
-//   return c.json(foundLaptops);
-// });
+      const foundLaptops = await prisma.laptop.findMany({
+        where: {
+          cpu: { contains: cpu, mode: "insensitive" },
+          gpu: { contains: gpu, mode: "insensitive" },
+          slug: { contains: slug, mode: "insensitive" },
+        },
+        select: {
+          model: true,
+          releaseYear: true,
+          cpu: true,
+          price: true,
+          brand: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+      if (!foundLaptops || foundLaptops.length == 0) {
+        return c.json("Laptop not found", 404);
+      }
+
+      return c.json(foundLaptops, 200);
+    } catch (error) {
+      return c.json({ error: "Server error" }, 500);
+    }
+  },
+);
 
 // GET Laptop by Slug
 laptopRoutes.openapi(
