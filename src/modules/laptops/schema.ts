@@ -68,14 +68,15 @@ export const CreateLaptopWithoutSlugSchema =
   CreateLaptopWithoutAutoGenSchema.omit({ slug: true });
 
 export const CreateLaptopSchema = CreateLaptopWithoutSlugSchema.extend({
-  brandName: z.string().min(2),
+  brandSlug: z.string().min(2),
 });
 
 export const UpdateLaptopSchema = CreateLaptopSchema.partial();
 
 const SeedLaptopSchema = CreateLaptopWithoutAutoGenSchema.extend({
-  brandName: z.string().min(2),
+  brandSlug: z.string().min(2),
 });
+
 export const SeedLaptopsSchema = SeedLaptopSchema.array();
 
 export const PutLaptopSchema = LaptopSchema.pick({
@@ -96,14 +97,12 @@ export const GetLaptopParamSchema = z.object({
   slug: SlugSchema,
 });
 
-export const IdParamSchema = z.object({
+export const LaptopParamIdSchema = z.object({
   id: z.coerce.number().positive(),
 });
 
 export const SearchParamSchema = z.object({
-  slug: SlugSchema.optional(),
-  cpu: z.string().optional(),
-  gpu: z.string().optional(),
+  q: z.string(),
 });
 
 export const ErrorSchema = z.object({
@@ -114,7 +113,7 @@ export const ErrorSchema = z.object({
         field: z.string().openapi({ example: "model" }),
         message: z.string().openapi({ example: "Min 3 character" }),
       })
-      .optional(),
+      .optional()
   ),
   message: z.string().optional().openapi({ example: "Internal Server Error" }),
 });

@@ -1,36 +1,40 @@
 import { prisma } from "../src/lib/prisma";
-import { brands, initialDataLaptops } from "../src/modules/laptops/data";
+import {
+  initialDataBrands,
+  initialDataLaptops,
+} from "../src/modules/laptops/data";
 
 async function main() {
-  console.log("Seeding process...");
-  const createBrands = await Promise.all(
-    brands.map((b) => prisma.brand.create({ data: b }))
-  );
+  for (const brand of initialDataBrands) {
+    const upsertedBrand = await prisma.brand.upsert({
+      where: { slug: brand.slug },
+      update: brand,
+      create: brand,
+    });
+    console.log(`🏷️ Brand: ${upsertedBrand.slug}`);
+  }
 
-  const brandMap = Object.fromEntries(
-    createBrands.map((brand) => {
-      console.log(`🏷️  Brand: ${brand.slug}`);
-      return [brand.name, brand.id];
-    })
-  );
+  for (const dataLaptop of initialDataLaptops) {
+    const { brandSlug, ...laptop } = dataLaptop;
 
-  await Promise.all(
-    initialDataLaptops.map((laptop) => {
-      const { brandName: brand, ...dataLaptop } = laptop;
-      console.log(`💻 Laptop: ${laptop.slug}`);
-      return prisma.laptop.create({
-        data: {
-          ...dataLaptop,
-          brandId: brandMap[brand],
-        },
-      });
-    })
-  );
+    const upsertedLaptop = await prisma.laptop.upsert({
+      where: { slug: dataLaptop.slug },
+      update: {
+        ...laptop,
+        brand: { connect: { slug: brandSlug.toLowerCase() } },
+      },
+      create: {
+        ...laptop,
+        brand: { connect: { slug: brandSlug.toLowerCase() } },
+      },
+    });
+    console.log(`💻 Laptop: ${upsertedLaptop.slug}`);
+  }
 }
 
 main()
   .then(async () => {
-    await prisma.$connect();
+    await prisma.$disconnect();
   })
   .catch(async (e) => {
     console.error(e);
