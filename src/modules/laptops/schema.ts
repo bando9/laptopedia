@@ -100,6 +100,12 @@ export const IdParamSchema = z.object({
   id: z.coerce.number().positive(),
 });
 
+export const SearchParamSchema = z.object({
+  slug: SlugSchema.optional(),
+  cpu: z.string().optional(),
+  gpu: z.string().optional(),
+});
+
 export const ErrorSchema = z.object({
   success: z.boolean().openapi({ example: false }),
   errors: z.array(

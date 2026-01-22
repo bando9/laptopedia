@@ -5,6 +5,7 @@ import {
   CreateLaptopSchema,
   ErrorSchema,
   UpdateLaptopSchema,
+  SearchParamSchema,
 } from "./schema";
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
@@ -56,6 +57,9 @@ laptopRoutes.openapi(
     method: "get",
     path: "/search",
     tags,
+    request: {
+      query: SearchParamSchema,
+    },
     description: "Search laptop by query",
     responses: {
       200: {
