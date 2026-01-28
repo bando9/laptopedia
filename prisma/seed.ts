@@ -4,19 +4,19 @@ import { brands, initialDataLaptops } from "../src/modules/laptops/data";
 async function main() {
   console.log("Seeding process...");
   const createBrands = await Promise.all(
-    brands.map((b) => prisma.brand.create({ data: b }))
+    brands.map((b) => prisma.brand.create({ data: b })),
   );
 
   const brandMap = Object.fromEntries(
     createBrands.map((brand) => {
       console.log(`🏷️  Brand: ${brand.slug}`);
       return [brand.name, brand.id];
-    })
+    }),
   );
 
   await Promise.all(
     initialDataLaptops.map((laptop) => {
-      const { brandName: brand, ...dataLaptop } = laptop;
+      const { brandSlug: brand, ...dataLaptop } = laptop;
       console.log(`💻 Laptop: ${laptop.slug}`);
       return prisma.laptop.create({
         data: {
@@ -24,7 +24,7 @@ async function main() {
           brandId: brandMap[brand],
         },
       });
-    })
+    }),
   );
 }
 

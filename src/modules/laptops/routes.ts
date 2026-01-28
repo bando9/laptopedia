@@ -5,7 +5,7 @@ import {
   CreateLaptopSchema,
   ErrorSchema,
   UpdateLaptopSchema,
-  SearchParamSchema,
+  SearchQuerySchema,
 } from "./schema";
 import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
@@ -52,13 +52,14 @@ laptopRoutes.openapi(
   },
 );
 
+// Search
 laptopRoutes.openapi(
   {
     method: "get",
     path: "/search",
     tags,
     request: {
-      query: SearchParamSchema,
+      query: SearchQuerySchema,
     },
     description: "Search laptop by query",
     responses: {
@@ -74,26 +75,23 @@ laptopRoutes.openapi(
   },
   async (c) => {
     try {
-      const { cpu, gpu, slug } = c.req.query();
+      const { q } = c.req.valid("query");
 
       const foundLaptops = await prisma.laptop.findMany({
         where: {
-          cpu: { contains: cpu, mode: "insensitive" },
-          gpu: { contains: gpu, mode: "insensitive" },
-          slug: { contains: slug, mode: "insensitive" },
+          OR: [
+            { cpu: { contains: q, mode: "insensitive" } },
+            { gpu: { contains: q, mode: "insensitive" } },
+            { slug: { contains: q, mode: "insensitive" } },
+          ],
         },
-        select: {
-          model: true,
-          releaseYear: true,
-          cpu: true,
-          price: true,
+        include: {
           brand: {
-            select: {
-              name: true,
-            },
+            select: { name: true },
           },
         },
       });
+
       if (!foundLaptops || foundLaptops.length == 0) {
         return c.json("Laptop not found", 404);
       }
@@ -173,7 +171,7 @@ laptopRoutes.openapi(
   },
   async (c) => {
     try {
-      const { brandName, ...laptopBody } = c.req.valid("json");
+      const { brandSlug: brandName, ...laptopBody } = c.req.valid("json");
 
       const newSlug = slugify(
         `${brandName.toLowerCase()} ${laptopBody.model.toLowerCase()}`,
@@ -289,7 +287,8 @@ laptopRoutes.openapi(
   },
   async (c) => {
     const id = Number(c.req.param("id"));
-    const { brandName, ...laptopBody }: CreateLaptopType = await c.req.json();
+    const { brandSlug: brandName, ...laptopBody }: CreateLaptopType =
+      await c.req.json();
 
     try {
       const laptop = await prisma.laptop.findUnique({

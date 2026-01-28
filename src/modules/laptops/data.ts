@@ -2,7 +2,7 @@ import { CreateBrandsType, SeedLaptopsType } from "./type";
 
 export const initialDataLaptops: SeedLaptopsType = [
   {
-    brandName: "Asus",
+    brandSlug: "asus",
     model: "ROG Zephyrus G14",
     slug: "asus-rog-zephyrus-g14",
     cpu: "AMD Ryzen 7 7840HS",
@@ -16,7 +16,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 18990000,
   },
   {
-    brandName: "Apple",
+    brandSlug: "apple",
     model: "MacBook Air M2 13",
     slug: "apple-macbook-air-m2-13",
     cpu: "Apple M2",
@@ -30,7 +30,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 15999000,
   },
   {
-    brandName: "Lenovo",
+    brandSlug: "lenovo",
     model: "Legion 5 Pro",
     slug: "lenovo-legion-5-pro",
     cpu: "AMD Ryzen 7 6800H",
@@ -44,7 +44,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 24999000,
   },
   {
-    brandName: "Acer",
+    brandSlug: "acer",
     model: "Swift X 14",
     slug: "acer-swift-x-14",
     cpu: "Intel Core i7-13700H",
@@ -58,7 +58,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 17499000,
   },
   {
-    brandName: "HP",
+    brandSlug: "hp",
     model: "Victus 15",
     slug: "hp-victus-15",
     cpu: "Intel Core i5-12500H",
@@ -72,7 +72,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 10999000,
   },
   {
-    brandName: "Dell",
+    brandSlug: "dell",
     model: "XPS 13 Plus",
     slug: "dell-xps-13-plus",
     cpu: "Intel Core i7-1360P",
@@ -86,7 +86,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 27999000,
   },
   {
-    brandName: "Asus",
+    brandSlug: "asus",
     model: "TUF Gaming F15",
     slug: "asus-tuf-gaming-f15",
     cpu: "Intel Core i7-12700H",
@@ -100,7 +100,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 16999000,
   },
   {
-    brandName: "Apple",
+    brandSlug: "apple",
     model: "MacBook Pro M2 14",
     slug: "apple-macbook-pro-m2-14",
     cpu: "Apple M2 Pro",
@@ -114,7 +114,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 32999000,
   },
   {
-    brandName: "Lenovo",
+    brandSlug: "lenovo",
     model: "ThinkPad X1 Carbon Gen 11",
     slug: "lenovo-thinkpad-x1-carbon-gen-11",
     cpu: "Intel Core i7-1355U",
@@ -128,7 +128,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 28999000,
   },
   {
-    brandName: "MSI",
+    brandSlug: "msi",
     model: "Katana 15",
     slug: "msi-katana-15",
     cpu: "Intel Core i7-13620H",
@@ -142,7 +142,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 25999000,
   },
   {
-    brandName: "Acer",
+    brandSlug: "acer",
     model: "Aspire 5",
     slug: "acer-aspire-5",
     cpu: "Intel Core i5-1235U",
@@ -156,7 +156,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 8999000,
   },
   {
-    brandName: "HP",
+    brandSlug: "hp",
     model: "EliteBook 840 G10",
     slug: "hp-elitebook-840-g10",
     cpu: "Intel Core i7-1355U",
@@ -170,7 +170,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 23999000,
   },
   {
-    brandName: "Asus",
+    brandSlug: "asus",
     model: "Zenbook 14 OLED",
     slug: "asus-zenbook-14-oled",
     cpu: "Intel Core i7-1360P",
@@ -184,7 +184,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 19999000,
   },
   {
-    brandName: "Lenovo",
+    brandSlug: "lenovo",
     model: "IdeaPad Slim 5",
     slug: "lenovo-ideapad-slim-5",
     cpu: "AMD Ryzen 5 7530U",
@@ -198,7 +198,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 10999000,
   },
   {
-    brandName: "Dell",
+    brandSlug: "dell",
     model: "Inspiron 14",
     slug: "dell-inspiron-14",
     cpu: "Intel Core i5-1335U",
@@ -212,7 +212,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 11999000,
   },
   {
-    brandName: "MSI",
+    brandSlug: "msi",
     model: "Prestige 14 Evo",
     slug: "msi-prestige-14-evo",
     cpu: "Intel Core i7-13700H",
@@ -226,7 +226,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 18999000,
   },
   {
-    brandName: "Apple",
+    brandSlug: "apple",
     model: "MacBook Air M1",
     slug: "apple-macbook-air-m1",
     cpu: "Apple M1",
@@ -240,7 +240,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 12999000,
   },
   {
-    brandName: "Asus",
+    brandSlug: "asus",
     model: "ROG Flow X13",
     slug: "asus-rog-flow-x13",
     cpu: "AMD Ryzen 9 7940HS",
@@ -254,7 +254,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 32999000,
   },
   {
-    brandName: "HP",
+    brandSlug: "hp",
     model: "Pavilion Aero 13",
     slug: "hp-pavilion-aero-13",
     cpu: "AMD Ryzen 7 7735U",
@@ -268,7 +268,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 13999000,
   },
   {
-    brandName: "Lenovo",
+    brandSlug: "lenovo",
     model: "Yoga Slim 7 Pro",
     slug: "lenovo-yoga-slim-7-pro",
     cpu: "AMD Ryzen 7 7840S",
@@ -282,7 +282,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 18999000,
   },
   {
-    brandName: "Dell",
+    brandSlug: "dell",
     model: "G15 Gaming",
     slug: "dell-g15-gaming",
     cpu: "Intel Core i7-12700H",
@@ -296,7 +296,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 14999000,
   },
   {
-    brandName: "Acer",
+    brandSlug: "acer",
     model: "Nitro 5",
     slug: "acer-nitro-5",
     cpu: "AMD Ryzen 7 6800H",
@@ -310,7 +310,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 17999000,
   },
   {
-    brandName: "Asus",
+    brandSlug: "asus",
     model: "Vivobook Pro 16X",
     slug: "asus-vivobook-pro-16x",
     cpu: "Intel Core i9-13980HX",
@@ -324,7 +324,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 34999000,
   },
   {
-    brandName: "HP",
+    brandSlug: "hp",
     model: "OMEN 16",
     slug: "hp-omen-16",
     cpu: "Intel Core i7-13700HX",
@@ -338,7 +338,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     price: 39999000,
   },
   {
-    brandName: "Lenovo",
+    brandSlug: "lenovo",
     model: "Legion Slim 7i",
     slug: "lenovo-legion-slim-7i",
     cpu: "Intel Core i9-13900H",
@@ -394,17 +394,3 @@ export const brands: CreateBrandsType = [
     imageUrl: "https://logos-world.net/wp-content/uploads/2020/11/MSI-Logo.png",
   },
 ];
-
-export let examplePostLaptop = {
-  brand: "Apple",
-  model: "MacBook Pro M3 Max",
-  cpu: "Apple M3 Max (14-core)",
-  gpu: "Apple M3 Max (30-core GPU)",
-  ram: "36GB Unified Memory",
-  storage: "1TB SSD",
-  display: "14.2-inch Liquid Retina XDR",
-  battery: null,
-  weight: null,
-  releaseYear: 2024,
-  price: 55999000,
-};

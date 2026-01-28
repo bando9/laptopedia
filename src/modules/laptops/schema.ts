@@ -68,13 +68,13 @@ export const CreateLaptopWithoutSlugSchema =
   CreateLaptopWithoutAutoGenSchema.omit({ slug: true });
 
 export const CreateLaptopSchema = CreateLaptopWithoutSlugSchema.extend({
-  brandName: z.string().min(2),
+  brandSlug: z.string().min(2),
 });
 
 export const UpdateLaptopSchema = CreateLaptopSchema.partial();
 
 const SeedLaptopSchema = CreateLaptopWithoutAutoGenSchema.extend({
-  brandName: z.string().min(2),
+  brandSlug: z.string().min(2),
 });
 export const SeedLaptopsSchema = SeedLaptopSchema.array();
 
@@ -100,10 +100,8 @@ export const IdParamSchema = z.object({
   id: z.coerce.number().positive(),
 });
 
-export const SearchParamSchema = z.object({
-  slug: SlugSchema.optional(),
-  cpu: z.string().optional(),
-  gpu: z.string().optional(),
+export const SearchQuerySchema = z.object({
+  q: z.string().min(1).openapi({ example: "apple" }),
 });
 
 export const ErrorSchema = z.object({
