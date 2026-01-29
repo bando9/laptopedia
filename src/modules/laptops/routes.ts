@@ -174,10 +174,10 @@ laptopRoutes.openapi(
   },
   async (c) => {
     try {
-      const { brandSlug: brandName, ...laptopBody } = c.req.valid("json");
+      const { brandSlug, ...laptopBody } = c.req.valid("json");
 
       const newSlug = generatedSlug({
-        brand: brandName,
+        brand: brandSlug,
         model: laptopBody.model,
       });
 
@@ -186,11 +186,13 @@ laptopRoutes.openapi(
           ...laptopBody,
           slug: newSlug,
           brand: {
-            connect: { name: brandName },
+            connect: { slug: brandSlug },
           },
         },
         include: { brand: true },
       });
+
+      console.log(newLaptop);
 
       return c.json(newLaptop, 201);
     } catch (error: any) {
