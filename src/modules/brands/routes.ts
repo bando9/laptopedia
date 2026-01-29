@@ -20,7 +20,18 @@ brandRoutes.openapi(
     },
   },
   async (c) => {
-    const laptops = await prisma.brand.findMany();
+    const laptops = await prisma.brand.findMany({
+      include: {
+        laptops: {
+          select: {
+            id: true,
+            slug: true,
+            price: true,
+          },
+        },
+      },
+    });
+
     return c.json(laptops, 200);
-  },
+  }
 );

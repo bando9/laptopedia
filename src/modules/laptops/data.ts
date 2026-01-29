@@ -11,7 +11,7 @@ export const initialDataLaptops: SeedLaptopsType = [
     storage: "512GB SSD",
     display: "14-inch QHD 165Hz",
     battery: "76Wh",
-    weight: "1.65kg",
+    weight: 1.65,
     releaseYear: 2023,
     price: 18990000,
   },

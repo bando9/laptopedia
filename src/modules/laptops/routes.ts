@@ -24,7 +24,7 @@ export const laptopRoutes = new OpenAPIHono({
             message: issue.message,
           })),
         },
-        400,
+        400
       );
     }
   },
@@ -50,7 +50,7 @@ laptopRoutes.openapi(
       include: { brand: true },
     });
     return c.json(laptops);
-  },
+  }
 );
 
 // Search
@@ -67,10 +67,6 @@ laptopRoutes.openapi(
       200: {
         content: { "application/json": { schema: LaptopSchema } },
         description: "Successfully get laptop detail",
-      },
-      404: {
-        content: { "applicatoin/json": { schema: ErrorSchema } },
-        description: "Laptop not found",
       },
       500: {
         content: { "applicatoin/json": { schema: ErrorSchema } },
@@ -95,15 +91,11 @@ laptopRoutes.openapi(
         },
       });
 
-      if (!foundLaptops || foundLaptops.length == 0) {
-        return c.json("Laptop not found", 404);
-      }
-
       return c.json(foundLaptops, 200);
     } catch (error) {
       return c.json({ error: "Server error" }, 500);
     }
-  },
+  }
 );
 
 // GET Laptop by Slug
@@ -136,11 +128,11 @@ laptopRoutes.openapi(
     });
 
     if (!laptop) {
-      return c.json("Laptop not found", 404);
+      return c.json({ message: "Laptop not found", slug }, 404);
     }
 
     return c.json(laptop, 200);
-  },
+  }
 );
 
 // CREATE new Laptop
@@ -197,7 +189,7 @@ laptopRoutes.openapi(
       console.log(error);
       return c.json({ message: "Failed to create new laptop" }, 500);
     }
-  },
+  }
 );
 
 // DELETE All Laptop
@@ -219,7 +211,7 @@ laptopRoutes.openapi(
     return c.json({
       message: "All laptops deleted",
     });
-  },
+  }
 );
 
 // DELETE Laptop by Id
@@ -250,7 +242,7 @@ laptopRoutes.openapi(
       message: `Laptop ${id} deleted`,
       result: deletedLaptopResult,
     });
-  },
+  }
 );
 
 // UPDATE Laptop by Id
@@ -325,5 +317,5 @@ laptopRoutes.openapi(
       }
       return c.json({ message: "Failed to update laptop" }, 500);
     }
-  },
+  }
 );

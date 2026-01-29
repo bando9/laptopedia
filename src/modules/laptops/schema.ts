@@ -111,7 +111,7 @@ export const ErrorSchema = z.object({
         field: z.string().openapi({ example: "model" }),
         message: z.string().openapi({ example: "Min 3 character" }),
       })
-      .optional(),
+      .optional()
   ),
   message: z.string().optional().openapi({ example: "Internal Server Error" }),
 });

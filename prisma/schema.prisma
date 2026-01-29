@@ -28,17 +28,23 @@ model Brand {
 model Laptop {
   id Int @id @default(autoincrement())
 
-  model       String
-  slug        String  @unique @db.VarChar(300)
-  cpu         String
-  gpu         String?
-  ram         String?
-  storage     String?
-  display     String?
-  battery     String?
-  weight      String?
+  slug  String @unique @db.VarChar(300)
+  model String
+
   releaseYear Int
   price       Int
+
+  cpu     String
+  gpu     String?
+  ram     String?
+  storage String?
+  display String?
+  battery String?
+
+  weight Int? // kg
+  width  Int? // cm
+  height Int? // cm
+  length Int? // cm
 
   brand   Brand @relation(fields: [brandId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   brandId Int
