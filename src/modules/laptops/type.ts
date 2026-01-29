@@ -1,11 +1,6 @@
 import z from "zod";
-import {
-  CreateBrandSchema,
-  CreateBrandsSchema,
-  CreateLaptopSchema,
-  LaptopSchema,
-  SeedLaptopsSchema,
-} from "./schema";
+import { CreateLaptopSchema, LaptopSchema, SeedLaptopsSchema } from "./schema";
+import { CreateBrandSchema, CreateBrandsSchema } from "../brands/schema";
 
 export type Laptop = z.infer<typeof LaptopSchema>;
 export type SeedLaptopsType = z.infer<typeof SeedLaptopsSchema>;
