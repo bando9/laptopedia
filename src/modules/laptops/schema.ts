@@ -1,4 +1,5 @@
 import { z } from "@hono/zod-openapi";
+import { BrandSchema } from "../brands/schema";
 
 export const SlugSchema = z
   .string()
@@ -6,27 +7,6 @@ export const SlugSchema = z
   .openapi({ example: "apple-macbook-pro-m3" });
 export const DateTimeSchema = z.date();
 export const IdSchema = z.number("id must be a number").positive().int();
-
-// Base Brand Schema
-export const BrandSchema = z.object({
-  id: IdSchema,
-  name: z.string().min(2).openapi({ example: "Apple" }),
-  slug: SlugSchema,
-  imageUrl: z
-    .string()
-    .nullable()
-    .openapi({ example: "https://logo.com/apple.png" }),
-  createdAt: DateTimeSchema,
-  updatedAt: DateTimeSchema,
-});
-export const BrandsSchema = BrandSchema.array();
-
-export const CreateBrandSchema = BrandSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-export const CreateBrandsSchema = CreateBrandSchema.array();
 
 // Base Laptop Schema
 export const LaptopSchema = z.object({
@@ -96,7 +76,7 @@ export const GetLaptopParamSchema = z.object({
   slug: SlugSchema,
 });
 
-export const IdParamSchema = z.object({
+export const LaptopParamIdSchema = z.object({
   id: z.coerce.number().positive(),
 });
 

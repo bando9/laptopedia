@@ -28,9 +28,6 @@ model Brand {
 model Laptop {
   id Int @id @default(autoincrement())
 
-  brand   Brand @relation(fields: [brandId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  brandId Int
-
   model       String
   slug        String  @unique @db.VarChar(300)
   cpu         String
@@ -42,6 +39,9 @@ model Laptop {
   weight      String?
   releaseYear Int
   price       Int
+
+  brand   Brand @relation(fields: [brandId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  brandId Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

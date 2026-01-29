@@ -1,5 +1,5 @@
 import {
-  IdParamSchema,
+  LaptopParamIdSchema,
   GetLaptopParamSchema,
   LaptopSchema,
   CreateLaptopSchema,
@@ -11,6 +11,7 @@ import slugify from "slugify";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { prisma } from "../../lib/prisma";
 import { CreateLaptopType } from "./type";
+import { generatedSlug } from "../common/common";
 
 export const laptopRoutes = new OpenAPIHono({
   defaultHook: (result, c) => {
@@ -64,12 +65,16 @@ laptopRoutes.openapi(
     description: "Search laptop by query",
     responses: {
       200: {
-        description: "Successfully get laptop detail",
         content: { "application/json": { schema: LaptopSchema } },
+        description: "Successfully get laptop detail",
       },
       404: {
         content: { "applicatoin/json": { schema: ErrorSchema } },
         description: "Laptop not found",
+      },
+      500: {
+        content: { "applicatoin/json": { schema: ErrorSchema } },
+        description: "Failed connect to database",
       },
     },
   },
@@ -86,9 +91,7 @@ laptopRoutes.openapi(
           ],
         },
         include: {
-          brand: {
-            select: { name: true },
-          },
+          brand: true,
         },
       });
 
@@ -165,7 +168,7 @@ laptopRoutes.openapi(
       },
       500: {
         content: { "applicatoin/json": { schema: ErrorSchema } },
-        description: "Internal Server Error",
+        description: "Failed to create new laptop",
       },
     },
   },
@@ -173,9 +176,10 @@ laptopRoutes.openapi(
     try {
       const { brandSlug: brandName, ...laptopBody } = c.req.valid("json");
 
-      const newSlug = slugify(
-        `${brandName.toLowerCase()} ${laptopBody.model.toLowerCase()}`,
-      );
+      const newSlug = generatedSlug({
+        brand: brandName,
+        model: laptopBody.model,
+      });
 
       const newLaptop = await prisma.laptop.create({
         data: {
@@ -191,7 +195,7 @@ laptopRoutes.openapi(
       return c.json(newLaptop, 201);
     } catch (error: any) {
       console.log(error);
-      return c.json({ message: "Internal Server Error" }, 500);
+      return c.json({ message: "Failed to create new laptop" }, 500);
     }
   },
 );
@@ -225,7 +229,7 @@ laptopRoutes.openapi(
     path: "/{id}",
     description: "Delete laptop",
     request: {
-      params: IdParamSchema,
+      params: LaptopParamIdSchema,
     },
     tags,
     responses: {
@@ -239,20 +243,13 @@ laptopRoutes.openapi(
   },
   async (c) => {
     const id = Number(c.req.param("id"));
-    const laptop = await prisma.laptop.findUnique({
-      where: {
-        id: id,
-      },
-    });
 
-    if (laptop) {
-      await prisma.laptop.delete({ where: { id: id } });
-      return c.json({
-        message: `Laptop ${id} deleted`,
-      });
-    } else {
-      return c.json({ message: "Laptop not found" }, 404);
-    }
+    const deletedLaptopResult = await prisma.laptop.delete({ where: { id } });
+
+    return c.json({
+      message: `Laptop ${id} deleted`,
+      result: deletedLaptopResult,
+    });
   },
 );
 
@@ -262,7 +259,7 @@ laptopRoutes.openapi(
     method: "patch",
     path: "/{id}",
     request: {
-      params: IdParamSchema,
+      params: LaptopParamIdSchema,
       body: { content: { "application/json": { schema: UpdateLaptopSchema } } },
     },
     description: "Update Laptop",
@@ -276,19 +273,18 @@ laptopRoutes.openapi(
         description: "Laptop not found",
       },
       400: {
-        content: { "applicatoin/json": { schema: ErrorSchema } },
+        content: { "application/json": { schema: ErrorSchema } },
         description: "Brand not found",
       },
       500: {
         content: { "applicatoin/json": { schema: ErrorSchema } },
-        description: "Internal Server Error",
+        description: "Failed to update laptop",
       },
     },
   },
   async (c) => {
     const id = Number(c.req.param("id"));
-    const { brandSlug: brandName, ...laptopBody }: CreateLaptopType =
-      await c.req.json();
+    const { brandSlug, ...laptopBody } = await c.req.valid("json");
 
     try {
       const laptop = await prisma.laptop.findUnique({
@@ -302,22 +298,22 @@ laptopRoutes.openapi(
 
       let newSlug = laptop.slug;
 
-      if (laptopBody.model || brandName) {
-        const brand = brandName || laptop.brand.name;
+      if (laptopBody.model || brandSlug) {
+        const brand = brandSlug || laptop.brand.name;
         const model = laptopBody.model || laptop.model;
 
-        newSlug = slugify(`${brand.toLowerCase()} ${model.toLowerCase()}`);
+        newSlug = generatedSlug({
+          brand: brand,
+          model: model,
+        });
       }
 
       const updatedLaptop = await prisma.laptop.update({
         where: { id: id },
         data: {
           ...laptopBody,
-          ...(brandName && {
-            brand: { connect: { name: brandName } },
-          }),
+          brand: brandSlug ? { connect: { slug: brandSlug } } : undefined,
           slug: newSlug,
-          updatedAt: new Date(),
         },
         include: { brand: true },
       });
@@ -325,9 +321,9 @@ laptopRoutes.openapi(
       return c.json(updatedLaptop, 200);
     } catch (error: any) {
       if (error.code == "P2025") {
-        return c.json("Brand not Found", 400);
+        return c.json("Brand or Laptop not Found", 400);
       }
-      return c.json("Internal Servel Error", 500);
+      return c.json({ message: "Failed to update laptop" }, 500);
     }
   },
 );
