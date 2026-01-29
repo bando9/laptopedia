@@ -192,8 +192,6 @@ laptopRoutes.openapi(
         include: { brand: true },
       });
 
-      console.log(newLaptop);
-
       return c.json(newLaptop, 201);
     } catch (error: any) {
       console.log(error);
