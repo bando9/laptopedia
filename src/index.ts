@@ -3,10 +3,18 @@ import { laptopRoutes } from "./modules/laptops/routes";
 import { Scalar } from "@scalar/hono-api-reference";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { brandRoutes } from "./modules/brands/routes";
+import { cors } from "hono/cors";
 
 const app = new OpenAPIHono();
 
 app.use(logger());
+app.use(
+  "*",
+  cors({
+    origin: "http://localhost:5173",
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  }),
+);
 
 // Configure API Routes
 const apiRoutes = app
